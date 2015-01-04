@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Farm Fresh Map</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <p>Search: <input type="text" data-bind="textInput: searchInput, valueUpdate: 'input', executeOnEnter: searchInputHandler"/>
+<button data-bind="click: searchInputHandler"></button></p>
+<div id="map-canvas">
+
+</div>
+
+    <script src="js/libs/jquery.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGkNL1MyGq7mJzh6-szeGne2y7xfB2Szs"></script>
+        <script src="js/libs/knockout-3.2.0.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

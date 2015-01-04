@@ -1,0 +1,422 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"I",
+				"IMAGEHEIGHT"
+			],
+			[
+				"IM",
+				"IMAGEHEIGHT"
+			],
+			[
+				"SP",
+				"SPEEDCONSTANT"
+			],
+			[
+				"sp",
+				"speedMultiplier"
+			],
+			[
+				"desc",
+				"description"
+			],
+			[
+				"mar",
+				"margin-top"
+			],
+			[
+				"col",
+				"col-md-12"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "index.html",
+			"settings":
+			{
+				"buffer_size": 408,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "css/style.css",
+			"settings":
+			{
+				"buffer_size": 69,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "\n function getFarmersMarketsByZip(zip) {\n    // or\n    // function getResults(lat, lng) {\n    $.ajax({\n        type: \"GET\",\n        contentType: \"application/json; charset=utf-8\",\n        // submit a get request to the restful service zipSearch or locSearch.\n        url: \"http://search.ams.usda.gov/farmersmarkets/v1/data.svc/zipSearch?zip=\" + zip,\n        // or\n        // url: \"http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat=\" + lat + \"&lng=\" + lng,\n        dataType: 'jsonp',\n        jsonpCallback: 'searchResultsHandler'\n    });\n}\n\nfunction getFarmersMarketsByLatLng(lat, lng) {\n    // or\n    // function getResults(lat, lng) {\n    $.ajax({\n        type: \"GET\",\n        contentType: \"application/json; charset=utf-8\",\n       url: \"http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat=\" + lat + \"&lng=\" + lng,\n        dataType: 'jsonp',\n        jsonpCallback: 'searchResultsHandler'\n    });\n}\n\n//iterate through the JSON result object.\nfunction searchResultsHandler(searchResults) {\n    console.dir(searchResults);\n    for (var key in searchResults) {\n        console.log('key: ' + key);\n        var results = searchResults[key];\n        for (var i = 0; i < searchResults.results.length; i++) {\n            console.log('Distance Market Name: ' + searchResults.results[i].marketname);\n            console.log('Market Name: ' + searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ')+1));\n            console.log('Market ID: ' + searchResults.results[i].id);\n           detailResultHandler(getFarmersMarketDetails(searchResults.results[i].id));\n            }\n        }\n    }\n\nfunction getFarmersMarketDetails(id) {\n    console.log('getting market details: ' + id);\n    $.ajax({\n        type: \"GET\",\n        contentType: \"application/json; charset=utf-8\",\n        // submit a get request to the restful service mktDetail.\n        url: \"http://search.ams.usda.gov/farmersmarkets/v1/data.svc/mktDetail?id=\" + id,\n        dataType: 'jsonp',\n        cache: false,\n       success: detailResultHandler\n        //jsonpCallback: 'detailResultHandler'\n    });\n}\n\n\n//iterate through the JSON result object.\nfunction detailResultHandler(detailresults) {\n        console.log('detailed results:' + detailresults);\n\n    console.dir(detailresults);\n    if (detailresults) {\n        var results = detailresults.marketdetails;\n        var googleLink = results.GoogleLink;\n        console.log('Google Link: ' + googleLink);\n        var latlngPosition = googleLink.indexOf('?q=') + 3;\n        console.log('Latitude: ' + googleLink.substring(latlngPosition, latlngPosition+7));\n        console.log('Longitude: ' + googleLink.substring(latlngPosition+13, latlngPosition+21));\n        console.log('Address: ' + results.Address);\n                console.log('Schedule: ' + results.Schedule);\n        console.log('Products ' + results.Products);\n    }\n}\n\n      function initialize() {\n        var mapOptions = {\n          center: { lat: 33.5250, lng: -86.8130},\n          zoom: 8\n        };\n        var map = new google.maps.Map(document.getElementById('map-canvas'),\n            mapOptions);\n        var myLatLng = new google.maps.LatLng(33.5250, -86.8130);\n        var marker = new google.maps.Marker({\n            map: map,\n            draggable: false,\n            animation: google.maps.Animation.DROP,\n            position: myLatLng\n        });\n        marker.customData = \"test\";\n        google.maps.event.addListener(marker, 'click', function() {\n    map.setZoom(8);\n    map.setCenter(marker.getPosition());\n            console.log('marker clicked: ', marker.customData);\n\n  });\n       // searchResultsHandler(getFarmersMarketsByZip(35223));\n        searchResultsHandler(getFarmersMarketsByLatLng(33.5250, -86.8130));\n      };\n      /*\ndetailResultHandler(getFarmersMarketDetails(1004066));\ndetailResultHandler(getFarmersMarketDetails(1002610));\ndetailResultHandler(getFarmersMarketDetails(1004625));\ngetFarmersMarketDetails(1003371);\ngetFarmersMarketDetails(1004624);\ngetFarmersMarketDetails(1003197);\ngetFarmersMarketDetails(1006492);\ngetFarmersMarketDetails(1005895);\ngetFarmersMarketDetails(1006885);\ngetFarmersMarketDetails(1005173);\ngetFarmersMarketDetails(1002443);\n*/\n\n\n      google.maps.event.addDomListener(window, 'load', initialize);",
+			"file": "js/app.js",
+			"file_size": 4308,
+			"file_write_time": 130646302411055288,
+			"settings":
+			{
+				"buffer_size": 4305,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "ResourcesUsed",
+			"settings":
+			{
+				"buffer_size": 749,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/Project5/OriginalFiles/minicourse-ajax-project/index.html",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/Project5/OriginalFiles/minicourse-ajax-project/js/script.js",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/gulpfile.js",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/views/css/style.css",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/README.md",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/project-2048.html",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/views/js/main.js",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/project-webperf.html",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/project-mobile.html",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/views/pizza.html",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/index.html",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/ResourcesUsed",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/css/style.css",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/build/views/pizza.html",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/build/project-mobile.html",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/build/project-2048.html",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/build/views/css/bootstrap-grid.css",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/build/views/js/main.js",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/js/perfmatters.js",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/build/project-webperf.html",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/build/index.html",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/npm-debug.log",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/weboptimizationproject/frontend-nanodegree-mobile-portfolio/build/main.js",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/FrontEndNanoGameDabsVersion/README.md",
+		"/C/Users/chriss/AppData/Roaming/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/FrontEndNanoGameVersion2/frontend-nanodegree-arcade-game-master/index.html",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/FrontEndNanoGameVersion2/frontend-nanodegree-arcade-game-master/js/resources.js",
+		"/C/Users/chriss/Documents/Udacity/FrontEndNano/InteractiveResumeDabneyBlum/frontend-nanodegree-resume/README.md",
+		"/C/Users/chriss/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/Users/chriss/Documents/GitHub/FrontEndNanoP1/index.html",
+		"/C/Users/chriss/Documents/GitHub/FrontEndNanoP1/css/style.css"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"update",
+			"getscrolltop",
+			"changePizzaSizes",
+			"determineDx",
+			"console.log",
+			"moving",
+			"mover",
+			"movingPizzas",
+			"col-md-6",
+			"console",
+			"left",
+			"pizzamoverItems",
+			"updatePositions",
+			"png",
+			"jpg",
+			"png",
+			"jpg",
+			"png",
+			"jpg",
+			"png",
+			"jpg",
+			"basicLef",
+			"position",
+			"basicLeft",
+			"none",
+			"pizzaElementGenerator",
+			"visi",
+			"updatePositions",
+			"mover",
+			".mover",
+			"pizzaElementGenerator",
+			"100",
+			"svg",
+			"png",
+			"col-md-4",
+			"img",
+			"alive",
+			"transparency",
+			"game o",
+			"numTre",
+			"numlives",
+			"reset",
+			"allE",
+			"all",
+			"numlives",
+			"column",
+			"Engine",
+			"bug",
+			"ctx",
+			"engine",
+			"compan",
+			"comp",
+			"compan",
+			"project"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 408,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								343,
+								343
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "css/style.css",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 69,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								69,
+								69
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "js/app.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4305,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "ResourcesUsed",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 749,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								337,
+								337
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"project": "DabneyBlumNeighborhoodMap.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 205.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
