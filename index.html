@@ -8,6 +8,13 @@
 <body>
     <p>Search: <input type="text" data-bind="textInput: searchInput, valueUpdate: 'input', executeOnEnter: searchInputHandler"/>
 <button data-bind="click: searchInputHandler"></button></p>
+
+<ul data-bind="foreach: placesList">
+  <li>
+  <span data-bind="text: name, click: $parent.setPlace" ></span>
+  <a href="#" data-bind="click: $parent.setPlace">Set</a>
+  </li>
+</ul>
 <div id="map-canvas">
 
 </div>

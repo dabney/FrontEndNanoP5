@@ -69,7 +69,7 @@ function detailResultHandler(detailresults) {
         console.log('Latitude: ' + googleLink.substring(latlngPosition, latlngPosition+7));
         console.log('Longitude: ' + googleLink.substring(latlngPosition+13, latlngPosition+21));
         console.log('Address: ' + results.Address);
-                console.log('Schedule: ' + results.Schedule);
+        console.log('Schedule: ' + results.Schedule);
         console.log('Products ' + results.Products);
     }
 }
@@ -114,10 +114,44 @@ getFarmersMarketDetails(1002443);
 
 var ViewModel = function() {
     var self = this;
+
+    self.placesList = ko.observableArray([
+        {
+            id: 1,
+            name: 'Tabby'
+        },
+        {
+            id: 2,
+            name: 'Tiger'
+        },
+        {
+            id: 3,
+            name: 'Scaredy'
+        },
+        {
+            id: 4,
+            name: 'Shadow'
+        },
+        {
+            id: 5,
+            name: 'Sleepy'
+        }
+        ]);
+
+   // initialPlaces.forEach(function(placeItem) {
+    //    self.placesList.push(new Place(placeItem));
+    //});
+    this.currentPlace = ko.observable(this.placesList()[0]);
+
     this.searchInput = ko.observable('Enter Search Term');
     searchInputHandler = function() {
-    console.log('searchInputHandler: ' + self.searchInput());
+    console.log('searchInputHandler: ' + self
+        .searchInput());
 };
+self.setPlace = function(clickedPlace) {
+    console.dir(clickedPlace);
+    console.log('in setPlace: ' + clickedPlace);
+}
 
 };
 ko.applyBindings(new ViewModel());
