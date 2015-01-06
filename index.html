@@ -10,10 +10,7 @@
 <button data-bind="click: searchInputHandler"></button></p>
 
 <ul data-bind="foreach: placesList">
-  <li>
-  <span data-bind="text: name, click: $parent.setPlace" ></span>
-  <a href="#" data-bind="click: $parent.setPlace">Set</a>
-  </li>
+  <li class="place-list-item" data-bind="text: name, click: $parent.setPlace" ></li>
 </ul>
 <div id="map-canvas">
 

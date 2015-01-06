@@ -1,3 +1,5 @@
+var ViewModel = function() {
+    var self = this;
 
  function getFarmersMarketsByZip(zip) {
     // or
@@ -112,8 +114,6 @@ getFarmersMarketDetails(1005173);
 getFarmersMarketDetails(1002443);
 */
 
-var ViewModel = function() {
-    var self = this;
 
     self.placesList = ko.observableArray([
         {
@@ -150,9 +150,8 @@ var ViewModel = function() {
 };
 self.setPlace = function(clickedPlace) {
     console.dir(clickedPlace);
-    console.log('in setPlace: ' + clickedPlace);
+    console.log('in setPlace: ' + clickedPlace.name);
 }
-
+      google.maps.event.addDomListener(window, 'load', initialize);
 };
 ko.applyBindings(new ViewModel());
-      google.maps.event.addDomListener(window, 'load', initialize);
