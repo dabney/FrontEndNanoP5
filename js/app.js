@@ -1,5 +1,3 @@
-var ViewModel = function() {
-    var self = this;
 
  function getFarmersMarketsByZip(zip) {
     // or
@@ -24,12 +22,15 @@ function getFarmersMarketsByLatLng(lat, lng) {
         contentType: "application/json; charset=utf-8",
        url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat=" + lat + "&lng=" + lng,
         dataType: 'jsonp',
+        //success: 'searchResultsHandler'
+
         jsonpCallback: 'searchResultsHandler'
     });
 }
 
 //iterate through the JSON result object.
 function searchResultsHandler(searchResults) {
+    console.log('in searchResultsHandler');
     console.dir(searchResults);
     for (var key in searchResults) {
         console.log('key: ' + key);
@@ -98,7 +99,7 @@ function detailResultHandler(detailresults) {
 
   });
        // searchResultsHandler(getFarmersMarketsByZip(35223));
-   //     searchResultsHandler(getFarmersMarketsByLatLng(33.5250, -86.8130));
+     searchResultsHandler(getFarmersMarketsByLatLng(33.5250, -86.8130));
       };
       /*
 detailResultHandler(getFarmersMarketDetails(1004066));
@@ -114,6 +115,8 @@ getFarmersMarketDetails(1005173);
 getFarmersMarketDetails(1002443);
 */
 
+var ViewModel = function() {
+    var self = this;
 
     self.placesList = ko.observableArray([
         {
@@ -154,4 +157,26 @@ self.setPlace = function(clickedPlace) {
 }
       google.maps.event.addDomListener(window, 'load', initialize);
 };
+
+(function() {
+  var flickerAPI = "http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?";
+  $.getJSON( flickerAPI, {
+    tags: "birmingham, alabama, farmers, market",
+    tagmode: "all",
+    format: "json",
+    bbox: "-74.0336278869122,40.7060308677937,-73.9551416443378,40.7655020263878",
+    //bbox: "33.26, -86.40, 33.36, -86.57",
+    accuracy: "16"
+  })
+    .done(function( data ) {
+      $.each( data.items, function( i, item ) {
+        $( "<img>" ).attr( "src", item.media.m ).appendTo( "#images" );
+        console.log('item.title: ' + item.title);
+        if ( i === 12 ) {
+          return false;
+        }
+      });
+    });
+})();
+
 ko.applyBindings(new ViewModel());
