@@ -159,14 +159,24 @@ self.setPlace = function(clickedPlace) {
 };
 
 (function() {
+
   var flickerAPI = "http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?";
   $.getJSON( flickerAPI, {
-    tags: "birmingham, alabama, farmers, market",
+    api_key: "b96723b2a5af6cf4427f3af91b908836",
+    tags: "trussville, fresh, market, alabama",
     tagmode: "all",
     format: "json",
-    bbox: "-74.0336278869122,40.7060308677937,-73.9551416443378,40.7655020263878",
+    media: "photos",
+    sort: "interestingness-desc",
+    extras: "geo",
+    //place_url: "/United+States/California/Berkeley"
+   // bbox: "37.81778516606761, -122.34374999999999, 37.92619056937629, -122.17208862304686"
+    lat: "33.5405",
+    lon: "-86.836",
+    //bbox: "-74.0336278869122,40.7060308677937,-73.9551416443378,40.7655020263878",
     //bbox: "33.26, -86.40, 33.36, -86.57",
-    accuracy: "16"
+    radius: "2"
+    //accuracy: "16"
   })
     .done(function( data ) {
       $.each( data.items, function( i, item ) {
