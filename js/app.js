@@ -68,9 +68,12 @@ function detailResultHandler(detailresults) {
         var results = detailresults.marketdetails;
         var googleLink = results.GoogleLink;
         console.log('Google Link: ' + googleLink);
-        var latlngPosition = googleLink.indexOf('?q=') + 3;
-        console.log('Latitude: ' + googleLink.substring(latlngPosition, latlngPosition+7));
-        console.log('Longitude: ' + googleLink.substring(latlngPosition+13, latlngPosition+21));
+        var latStringStart = googleLink.indexOf('?q=') + 3;
+        var latStringEnd = googleLink.indexOf('%2C%20')
+        console.log('Latitude: ' + googleLink.substring(latStringStart, latStringEnd));
+                var lngStringStart = latStringEnd + 6;
+                var lngStringEnd = googleLink.lastIndexOf('%20');
+        console.log('Longitude: ' + googleLink.substring(lngStringStart, lngStringEnd));
         console.log('Address: ' + results.Address);
         console.log('Schedule: ' + results.Schedule);
         console.log('Products ' + results.Products);
@@ -99,7 +102,7 @@ function detailResultHandler(detailresults) {
 
   });
        // searchResultsHandler(getFarmersMarketsByZip(35223));
-     searchResultsHandler(getFarmersMarketsByLatLng(33.5250, -86.8130));
+     searchResultsHandler(getFarmersMarketsByLatLng(37.81778516606761, -122.34374999999999));
       };
       /*
 detailResultHandler(getFarmersMarketDetails(1004066));
@@ -165,7 +168,7 @@ var flickrAPI = "https://api.flickr.com/services/rest/?method=flickr.photos.sear
  //var flickrAPI = "https://api.flickr.com/services/rest/?method=flickr.photos.search&format=json&api_key=b96723b2a5af6cf4427f3af91b908836&text=bus&lat=34.0194543&lon=-118.4911912&extras=geo,url_t,url_m&radius=20&radius_units=mi&per_page=20&format=json&jsoncallback=?";
   //var flickrAPI = "http://api.flickr.com/services/rest/?&method=flickr.photos.search&api_key=b96723b2a5af6cf4427f3af91b908836&format=json&jsoncallback=?";
   //var flickrAPI = "http://api.flickr.com/services/re/?method=flickr.photos.search?jsoncallback=?";
-  $.getJSON( "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=food&tagmode=all&lat=33.5163&lon=-86.7912&radius=1&format=json&nojsoncallback=1",
+  $.getJSON( "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=farmers market&tag_mode='all'&sort=interestingness-desc&extras=date_taken&lat=37.786250&lon=-122.404883&radius=1&format=json&nojsoncallback=1",
     /*flickrAPI, {
     //method: "flickr.photos.search",
     //api_key: "b96723b2a5af6cf4427f3af91b908836",
@@ -193,6 +196,7 @@ function(data) {
     for (var i=0; i<20; i++) {
         if (data.photos.photo[i]){
     currentPhoto = data.photos.photo[i];
+    console.dir(currentPhoto);
     currentPhotoURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server + "/" + currentPhoto.id + "_" + currentPhoto.secret + ".jpg";
     $( "<img>" ).attr( "src", currentPhotoURL ).appendTo( "#images" );
     console.log(currentPhotoURL);
