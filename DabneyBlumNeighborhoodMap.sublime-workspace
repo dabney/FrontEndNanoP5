@@ -39,7 +39,7 @@
 			"file": "index.html",
 			"settings":
 			{
-				"buffer_size": 408,
+				"buffer_size": 687,
 				"line_ending": "Unix"
 			}
 		},
@@ -52,13 +52,10 @@
 			}
 		},
 		{
-			"contents": "\n function getFarmersMarketsByZip(zip) {\n    // or\n    // function getResults(lat, lng) {\n    $.ajax({\n        type: \"GET\",\n        contentType: \"application/json; charset=utf-8\",\n        // submit a get request to the restful service zipSearch or locSearch.\n        url: \"http://search.ams.usda.gov/farmersmarkets/v1/data.svc/zipSearch?zip=\" + zip,\n        // or\n        // url: \"http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat=\" + lat + \"&lng=\" + lng,\n        dataType: 'jsonp',\n        jsonpCallback: 'searchResultsHandler'\n    });\n}\n\nfunction getFarmersMarketsByLatLng(lat, lng) {\n    // or\n    // function getResults(lat, lng) {\n    $.ajax({\n        type: \"GET\",\n        contentType: \"application/json; charset=utf-8\",\n       url: \"http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat=\" + lat + \"&lng=\" + lng,\n        dataType: 'jsonp',\n        jsonpCallback: 'searchResultsHandler'\n    });\n}\n\n//iterate through the JSON result object.\nfunction searchResultsHandler(searchResults) {\n    console.dir(searchResults);\n    for (var key in searchResults) {\n        console.log('key: ' + key);\n        var results = searchResults[key];\n        for (var i = 0; i < searchResults.results.length; i++) {\n            console.log('Distance Market Name: ' + searchResults.results[i].marketname);\n            console.log('Market Name: ' + searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ')+1));\n            console.log('Market ID: ' + searchResults.results[i].id);\n           detailResultHandler(getFarmersMarketDetails(searchResults.results[i].id));\n            }\n        }\n    }\n\nfunction getFarmersMarketDetails(id) {\n    console.log('getting market details: ' + id);\n    $.ajax({\n        type: \"GET\",\n        contentType: \"application/json; charset=utf-8\",\n        // submit a get request to the restful service mktDetail.\n        url: \"http://search.ams.usda.gov/farmersmarkets/v1/data.svc/mktDetail?id=\" + id,\n        dataType: 'jsonp',\n        cache: false,\n       success: detailResultHandler\n        //jsonpCallback: 'detailResultHandler'\n    });\n}\n\n\n//iterate through the JSON result object.\nfunction detailResultHandler(detailresults) {\n        console.log('detailed results:' + detailresults);\n\n    console.dir(detailresults);\n    if (detailresults) {\n        var results = detailresults.marketdetails;\n        var googleLink = results.GoogleLink;\n        console.log('Google Link: ' + googleLink);\n        var latlngPosition = googleLink.indexOf('?q=') + 3;\n        console.log('Latitude: ' + googleLink.substring(latlngPosition, latlngPosition+7));\n        console.log('Longitude: ' + googleLink.substring(latlngPosition+13, latlngPosition+21));\n        console.log('Address: ' + results.Address);\n                console.log('Schedule: ' + results.Schedule);\n        console.log('Products ' + results.Products);\n    }\n}\n\n      function initialize() {\n        var mapOptions = {\n          center: { lat: 33.5250, lng: -86.8130},\n          zoom: 8\n        };\n        var map = new google.maps.Map(document.getElementById('map-canvas'),\n            mapOptions);\n        var myLatLng = new google.maps.LatLng(33.5250, -86.8130);\n        var marker = new google.maps.Marker({\n            map: map,\n            draggable: false,\n            animation: google.maps.Animation.DROP,\n            position: myLatLng\n        });\n        marker.customData = \"test\";\n        google.maps.event.addListener(marker, 'click', function() {\n    map.setZoom(8);\n    map.setCenter(marker.getPosition());\n            console.log('marker clicked: ', marker.customData);\n\n  });\n       // searchResultsHandler(getFarmersMarketsByZip(35223));\n        searchResultsHandler(getFarmersMarketsByLatLng(33.5250, -86.8130));\n      };\n      /*\ndetailResultHandler(getFarmersMarketDetails(1004066));\ndetailResultHandler(getFarmersMarketDetails(1002610));\ndetailResultHandler(getFarmersMarketDetails(1004625));\ngetFarmersMarketDetails(1003371);\ngetFarmersMarketDetails(1004624);\ngetFarmersMarketDetails(1003197);\ngetFarmersMarketDetails(1006492);\ngetFarmersMarketDetails(1005895);\ngetFarmersMarketDetails(1006885);\ngetFarmersMarketDetails(1005173);\ngetFarmersMarketDetails(1002443);\n*/\n\n\n      google.maps.event.addDomListener(window, 'load', initialize);",
 			"file": "js/app.js",
-			"file_size": 4308,
-			"file_write_time": 130646302411055288,
 			"settings":
 			{
-				"buffer_size": 4305,
+				"buffer_size": 4557,
 				"line_ending": "Unix"
 			}
 		},
@@ -66,7 +63,7 @@
 			"file": "ResourcesUsed",
 			"settings":
 			{
-				"buffer_size": 749,
+				"buffer_size": 931,
 				"line_ending": "Windows"
 			}
 		}
@@ -217,7 +214,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -226,15 +223,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 408,
+						"buffer_size": 687,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								343,
-								343
+								361,
+								361
 							]
 						],
 						"settings":
@@ -247,7 +244,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -277,7 +274,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -286,15 +283,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4305,
+						"buffer_size": 4557,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								4431,
+								4431
 							]
 						],
 						"settings":
@@ -304,10 +301,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 900.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -316,15 +313,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 749,
+						"buffer_size": 931,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								337,
-								337
+								931,
+								931
 							]
 						],
 						"settings":
@@ -335,7 +332,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]

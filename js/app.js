@@ -159,25 +159,57 @@ self.setPlace = function(clickedPlace) {
 };
 
 (function() {
-
-  var flickerAPI = "http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?";
-  $.getJSON( flickerAPI, {
-    api_key: "b96723b2a5af6cf4427f3af91b908836",
-    tags: "trussville, fresh, market, alabama",
+var flickrAPI = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=b96723b2a5af6cf4427f3af91b908836&";
+  //var flickrAPI = "http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?";
+ // var flickrAPI = "https://api.flickr.com/services/rest/?jsoncallback=?";
+ //var flickrAPI = "https://api.flickr.com/services/rest/?method=flickr.photos.search&format=json&api_key=b96723b2a5af6cf4427f3af91b908836&text=bus&lat=34.0194543&lon=-118.4911912&extras=geo,url_t,url_m&radius=20&radius_units=mi&per_page=20&format=json&jsoncallback=?";
+  //var flickrAPI = "http://api.flickr.com/services/rest/?&method=flickr.photos.search&api_key=b96723b2a5af6cf4427f3af91b908836&format=json&jsoncallback=?";
+  //var flickrAPI = "http://api.flickr.com/services/re/?method=flickr.photos.search?jsoncallback=?";
+  $.getJSON( "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=food&tagmode=all&lat=33.5163&lon=-86.7912&radius=1&format=json&nojsoncallback=1",
+    /*flickrAPI, {
+    //method: "flickr.photos.search",
+    //api_key: "b96723b2a5af6cf4427f3af91b908836",
+    tags: "pepper, place, market, alabama",
     tagmode: "all",
     format: "json",
     media: "photos",
     sort: "interestingness-desc",
-    extras: "geo",
+    */
+    //extras: "geo",
     //place_url: "/United+States/California/Berkeley"
    // bbox: "37.81778516606761, -122.34374999999999, 37.92619056937629, -122.17208862304686"
-    lat: "33.5405",
-    lon: "-86.836",
+    //lat: "33.5405",
+    //lon: "-86.836",
     //bbox: "-74.0336278869122,40.7060308677937,-73.9551416443378,40.7655020263878",
     //bbox: "33.26, -86.40, 33.36, -86.57",
-    radius: "2"
+    //radius: "2"
     //accuracy: "16"
-  })
+  //},
+//ajaxCallBack
+function(data) {
+    var currentPhoto;
+    var currentPhotoURL;
+    console.log('number of photos: ' + data.photos.photo.length);
+    for (var i=0; i<20; i++) {
+        if (data.photos.photo[i]){
+    currentPhoto = data.photos.photo[i];
+    currentPhotoURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server + "/" + currentPhoto.id + "_" + currentPhoto.secret + ".jpg";
+    $( "<img>" ).attr( "src", currentPhotoURL ).appendTo( "#images" );
+    console.log(currentPhotoURL);
+}
+}
+  }
+  );
+  function ajaxCallBack(data) {
+    $.each( data.items, function( i, item ) {
+        $( "<img>" ).attr( "src", item.media.m ).appendTo( "#images" );
+        console.log('item.title: ' + item.title);
+        if ( i === 12 ) {
+          return false;
+        }
+      });
+  }
+  /*
     .done(function( data ) {
       $.each( data.items, function( i, item ) {
         $( "<img>" ).attr( "src", item.media.m ).appendTo( "#images" );
@@ -187,6 +219,7 @@ self.setPlace = function(clickedPlace) {
         }
       });
     });
+*/
 })();
 
 ko.applyBindings(new ViewModel());

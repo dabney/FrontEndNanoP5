@@ -26,3 +26,13 @@ http://www.quirksmode.org/js/strings.html
 http://stackoverflow.com/questions/8610874/value-binding-in-knockoutjs-fails-for-select-when-having-complex-types
 
 https://www.devbridge.com/articles/knockout-a-real-world-example/
+
+Flickr api
+key: b96723b2a5af6cf4427f3af91b908836
+secret: dfa32841c5c53fea
+
+http://api.jquery.com/jquery.getjson/
+
+http://stackoverflow.com/questions/2513417/jquery-getjson-how-do-i-parse-a-flickr-photos-search-rest-api-call
+
+http://jsfiddle.net/b1veacqu/
