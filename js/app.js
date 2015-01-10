@@ -50,23 +50,16 @@ self.setPlace = function(clickedPlace) {
         // url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat=" + lat + "&lng=" + lng,
         dataType: 'jsonp',
         success: function(searchResults) {
-            console.log('get by zip modelview');
-         console.dir(searchResults.results);
-   for (var i = 0; i < searchResults.results.length; i++) {
+          for (var i = 0; i < searchResults.results.length; i++) {
             var place = {
                 marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ')+1),
                 marketID: searchResults.results[i].id
             };
+            getFarmersMarketDetails(place);
             self.placesList.push(place);
             //createMapMarker(33.5250+i, -86.8130, place);
-
-            console.log('Distance Market Name: ' + searchResults.results[i].marketname);
-            console.log('Market Name: ' + searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ')+1));
-            console.log('Market ID: ' + searchResults.results[i].id);
-           //detailResultHandler(getFarmersMarketDetails(searchResults.results[i].id));
-
             }
-     }
+          }
     });
 }
 
@@ -78,9 +71,21 @@ function getFarmersMarketsByLatLng(lat, lng) {
         contentType: "application/json; charset=utf-8",
        url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat=" + lat + "&lng=" + lng,
         dataType: 'jsonp',
-        //success: 'searchResultsHandler'
+        success: function(searchResults) {
+          for (var i = 0; i < searchResults.results.length; i++) {
+            var place = {
+                marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ')+1),
+                marketID: searchResults.results[i].id
+            };
+                        getFarmersMarketDetails(place);
 
-        jsonpCallback: 'searchResultsHandler'
+            self.placesList.push(place);
+
+            //createMapMarker(33.5250+i, -86.8130, place);
+            }
+                        console.log('placesList: ' + self.placesList());
+
+          }
     });
 }
 
@@ -109,16 +114,33 @@ function searchResultsHandler(searchResults) {
         }
     }
 
-function getFarmersMarketDetails(id) {
-    console.log('getting market details: ' + id);
+function getFarmersMarketDetails(place) {
+    console.log('getting market details: ' + place.marketID);
     $.ajax({
         type: "GET",
         contentType: "application/json; charset=utf-8",
         // submit a get request to the restful service mktDetail.
-        url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/mktDetail?id=" + id,
+        url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/mktDetail?id=" + place.marketID,
+        context: place,
         dataType: 'jsonp',
         cache: false,
-       success: detailResultHandler
+       success: function(detailResults) {
+        console.log('this.marketName: ' + this.marketName);
+        if (detailResults) {
+        var marketDetails = detailResults.marketdetails;
+        var googleLink = marketDetails.GoogleLink;
+        console.log('Google Link: ' + googleLink);
+        var latStringStart = googleLink.indexOf('?q=') + 3;
+        var latStringEnd = googleLink.indexOf('%2C%20')
+                var lngStringStart = latStringEnd + 6;
+                var lngStringEnd = googleLink.lastIndexOf('%20');
+        console.log('Latitude: ' + googleLink.substring(latStringStart, latStringEnd));   
+        console.log('Longitude: ' + googleLink.substring(lngStringStart, lngStringEnd));
+        console.log('Address: ' + marketDetails.Address);
+        console.log('Schedule: ' + marketDetails.Schedule);
+        console.log('Products ' + marketDetails.Products);
+    }
+    }
         //jsonpCallback: 'detailResultHandler'
     });
 }
@@ -188,10 +210,12 @@ function createMapMarker (lat, lng, customData) {
 
   });
 getFarmersMarketsByZip(35223);
-     //searchResultsHandler(getFarmersMarketsByLatLng(37.81778516606761, -122.34374999999999));
+getFarmersMarketsByLatLng(37.81778516606761, -122.34374999999999);
+console.log('placesList length: ' + self.placesList().length);
              for (var i = 0; i < self.placesList.length; i++) {
+                console.log('getting detailed results for: ' + i);
 
-                           detailResultHandler(getFarmersMarketDetails(self.placesList[i].marketID));
+                           detailResultHandler(getFarmersMarketDetails(self.placesList[i]));
                        }
 
       };
