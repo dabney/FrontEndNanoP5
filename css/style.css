@@ -1,4 +1,9 @@
-      html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+      html, body { height: 100%; margin: 0; padding: 0;}
+      #app-container {height: 100%; width: 100% position: absolute;}
+      #map-canvas { height: 100%; width: 100%; margin: 0; padding: 0; z-index: 1; position: absolute;}
+    #images { height: 50%; margin: 0; padding: 0;z-index: 3;}
+
+      .place-list {height: 50%; width: 20%; z-index: 2; position: absolute;}
       .place-list-item {
         border: 1px solid red;
         cursor: pointer;}
