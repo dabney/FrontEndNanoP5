@@ -36,6 +36,7 @@ var ViewModel = function() {
 self.setPlace = function(clickedPlace) {
     console.dir(clickedPlace);
     console.log('in setPlace: ' + clickedPlace.marketName);
+    clickedPlace.mapInfoWindow.open(map, clickedPlace.mapMarker);
 }
 
  function getFarmersMarketsByZip(zip) {
@@ -226,13 +227,15 @@ function createInfoWindow (place) {
 
   });
 getFarmersMarketsByZip(35223);
-getFarmersMarketsByLatLng(37.81778516606761, -122.34374999999999);
+
+/*
 console.log('placesList length: ' + self.placesList().length);
              for (var i = 0; i < self.placesList.length; i++) {
                 console.log('getting detailed results for: ' + i);
 
                            detailResultHandler(getFarmersMarketDetails(self.placesList[i]));
                        }
+                       */
 
       };
       google.maps.event.addDomListener(window, 'load', initialize);
