@@ -21,28 +21,7 @@ var ViewModel = function() {
     var self = this;
     var map;
 
-    self.placesList = ko.observableArray([
-        {
-            id: 1,
-            name: 'Tabby'
-        },
-        {
-            id: 2,
-            name: 'Tiger'
-        },
-        {
-            id: 3,
-            name: 'Scaredy'
-        },
-        {
-            id: 4,
-            name: 'Shadow'
-        },
-        {
-            id: 5,
-            name: 'Sleepy'
-        }
-        ]);
+    self.placesList = ko.observableArray([]);
 
    // initialPlaces.forEach(function(placeItem) {
     //    self.placesList.push(new Place(placeItem));
@@ -56,7 +35,7 @@ var ViewModel = function() {
 };
 self.setPlace = function(clickedPlace) {
     console.dir(clickedPlace);
-    console.log('in setPlace: ' + clickedPlace.name);
+    console.log('in setPlace: ' + clickedPlace.marketName);
 }
 
  function getFarmersMarketsByZip(zip) {
@@ -70,7 +49,24 @@ self.setPlace = function(clickedPlace) {
         // or
         // url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat=" + lat + "&lng=" + lng,
         dataType: 'jsonp',
-        jsonpCallback: 'searchResultsHandler'
+        success: function(searchResults) {
+            console.log('get by zip modelview');
+         console.dir(searchResults.results);
+   for (var i = 0; i < searchResults.results.length; i++) {
+            var place = {
+                marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ')+1),
+                marketID: searchResults.results[i].id
+            };
+            self.placesList.push(place);
+            //createMapMarker(33.5250+i, -86.8130, place);
+
+            console.log('Distance Market Name: ' + searchResults.results[i].marketname);
+            console.log('Market Name: ' + searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ')+1));
+            console.log('Market ID: ' + searchResults.results[i].id);
+           //detailResultHandler(getFarmersMarketDetails(searchResults.results[i].id));
+
+            }
+     }
     });
 }
 
@@ -100,13 +96,14 @@ function searchResultsHandler(searchResults) {
                 marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ')+1),
                 marketID: searchResults.results[i].id
             };
-            //ViewModel.placesList.push(place);
+            self.placesList.push(place);
             //createMapMarker(33.5250+i, -86.8130, place);
 
             console.log('Distance Market Name: ' + searchResults.results[i].marketname);
             console.log('Market Name: ' + searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ')+1));
             console.log('Market ID: ' + searchResults.results[i].id);
-           detailResultHandler(getFarmersMarketDetails(searchResults.results[i].id));
+           //detailResultHandler(getFarmersMarketDetails(searchResults.results[i].id));
+
             }
             console.log('placesList: ' + self.placesList);
         }
@@ -190,10 +187,18 @@ function createMapMarker (lat, lng, customData) {
             console.log('marker ID: ', marker.customData.marketID);
 
   });
-       // searchResultsHandler(getFarmersMarketsByZip(35223));
-     searchResultsHandler(getFarmersMarketsByLatLng(37.81778516606761, -122.34374999999999));
+getFarmersMarketsByZip(35223);
+     //searchResultsHandler(getFarmersMarketsByLatLng(37.81778516606761, -122.34374999999999));
+             for (var i = 0; i < self.placesList.length; i++) {
+
+                           detailResultHandler(getFarmersMarketDetails(self.placesList[i].marketID));
+                       }
+
       };
       google.maps.event.addDomListener(window, 'load', initialize);
+     // getFarmersMarketsByZip(35223);
+
+      //initialize();
 }; //end ViewModel
 var showFlickrPhotos = function() {
   $.getJSON( "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=farmers market&tag_mode='all'&sort=interestingness-desc&safe_search=1&extras=date_taken&lat=37.786250&lon=-122.404883&radius=.2&format=json&nojsoncallback=1",
@@ -217,6 +222,8 @@ var showFlickrPhotos = function() {
     //accuracy: "16"
   //},
 //ajaxCallBack
+
+
 function(data) {
     var currentPhoto;
     var currentPhotoURL;
@@ -233,6 +240,65 @@ function(data) {
   }
   );
 }
-showFlickrPhotos();
 
+
+//showFlickrPhotos();
+/*
+
+ function getFarmersMarketsByZip(zip) {
+    // or
+    // function getResults(lat, lng) {
+    $.ajax({
+        type: "GET",
+        contentType: "application/json; charset=utf-8",
+        // submit a get request to the restful service zipSearch or locSearch.
+        url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/zipSearch?zip=" + zip,
+        // or
+        // url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat=" + lat + "&lng=" + lng,
+        dataType: 'jsonp',
+        jsonpCallback: 'searchResultsHandler'
+    });
+}
+
+function getFarmersMarketsByLatLng(lat, lng) {
+    // or
+    // function getResults(lat, lng) {
+    $.ajax({
+        type: "GET",
+        contentType: "application/json; charset=utf-8",
+       url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat=" + lat + "&lng=" + lng,
+        dataType: 'jsonp',
+        //success: 'searchResultsHandler'
+
+        jsonpCallback: 'searchResultsHandler'
+    });
+}
+
+//iterate through the JSON result object.
+function searchResultsHandler(searchResults) {
+    console.log('in searchResultsHandler');
+    console.dir(searchResults);
+    for (var key in searchResults) {
+        console.log('key: ' + key);
+        var results = searchResults[key];
+        for (var i = 0; i < searchResults.results.length; i++) {
+            var place = {
+                marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ')+1),
+                marketID: searchResults.results[i].id
+            };
+            self.placesList.push(place);
+            //createMapMarker(33.5250+i, -86.8130, place);
+
+            console.log('Distance Market Name: ' + searchResults.results[i].marketname);
+            console.log('Market Name: ' + searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ')+1));
+            console.log('Market ID: ' + searchResults.results[i].id);
+           //detailResultHandler(getFarmersMarketDetails(searchResults.results[i].id));
+
+            }
+            console.log('placesList: ' + self.placesList);
+        }
+    }
+searchResultsHandler(getFarmersMarketsByZip(35223));
+
+*/
 ko.applyBindings(new ViewModel());
