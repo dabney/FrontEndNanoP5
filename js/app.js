@@ -124,21 +124,25 @@ function getFarmersMarketDetails(place) {
         context: place,
         dataType: 'jsonp',
         cache: false,
+        // In the success function this will be the context which is set to 'place'
        success: function(detailResults) {
         console.log('this.marketName: ' + this.marketName);
         if (detailResults) {
         var marketDetails = detailResults.marketdetails;
         var googleLink = marketDetails.GoogleLink;
-        console.log('Google Link: ' + googleLink);
         var latStringStart = googleLink.indexOf('?q=') + 3;
         var latStringEnd = googleLink.indexOf('%2C%20')
-                var lngStringStart = latStringEnd + 6;
-                var lngStringEnd = googleLink.lastIndexOf('%20');
-        console.log('Latitude: ' + googleLink.substring(latStringStart, latStringEnd));   
-        console.log('Longitude: ' + googleLink.substring(lngStringStart, lngStringEnd));
-        console.log('Address: ' + marketDetails.Address);
-        console.log('Schedule: ' + marketDetails.Schedule);
-        console.log('Products ' + marketDetails.Products);
+        var lngStringStart = latStringEnd + 6;
+        var lngStringEnd = googleLink.lastIndexOf('%20');
+        this.lat = googleLink.substring(latStringStart, latStringEnd);   
+        this.lng = googleLink.substring(lngStringStart, lngStringEnd);
+        this.address = marketDetails.Address;
+        this.schedule = marketDetails.Schedule;
+        this.products = marketDetails.Products;
+        this.mapMarker = createMapMarker(this.lat, this.lng, this);
+        this.mapInfoWindow = createInfoWindow(this);
+
+        console.dir(this);
     }
     }
         //jsonpCallback: 'detailResultHandler'
@@ -180,13 +184,25 @@ function createMapMarker (lat, lng, customData) {
         marker.customData = customData;
         console.log('created map marker at: ' + lat + ', ' + lng);
         google.maps.event.addListener(marker, 'click', function() {
-    map.setZoom(8);
-    map.setCenter(marker.getPosition());
+    //map.setZoom(12);
+    //map.setCenter(marker.getPosition());
             console.log('marker clicked: ', marker.customData);
+            marker.customData.mapInfoWindow.open(map, marker);
 
   });
+        return(marker);
 }
 
+function createInfoWindow (place) {
+ var currentInfoWindow = new google.maps.InfoWindow({
+      content: '<h4>' + place.marketName + '</h4>' +
+                '<p>' + place.address + '</p>' +
+                '<p> Hours: ' + place.schedule + '</p>' +
+                '<p> Products: ' + place.products + '</p>'
+
+  });
+ return(currentInfoWindow);
+}
       function initialize() {
         var mapOptions = {
           center: { lat: 33.5250, lng: -86.8130},
