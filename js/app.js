@@ -20,6 +20,8 @@ getFarmersMarketDetails(1002443);
 var ViewModel = function() {
     var self = this;
     var map;
+    var infoWindow;
+    var selectedMarker;
 
     self.placesList = ko.observableArray([]);
 
@@ -36,7 +38,9 @@ var ViewModel = function() {
 self.setPlace = function(clickedPlace) {
     console.dir(clickedPlace);
     console.log('in setPlace: ' + clickedPlace.marketName);
-    clickedPlace.mapInfoWindow.open(map, clickedPlace.mapMarker);
+    updateInfoWindow(clickedPlace);
+    infoWindow.open(map, clickedPlace.mapMarker)
+    //clickedPlace.mapInfoWindow.open(map, clickedPlace.mapMarker);
 }
 
  function getFarmersMarketsByZip(zip) {
@@ -141,7 +145,7 @@ function getFarmersMarketDetails(place) {
         this.schedule = marketDetails.Schedule;
         this.products = marketDetails.Products;
         this.mapMarker = createMapMarker(this.lat, this.lng, this);
-        this.mapInfoWindow = createInfoWindow(this);
+        //this.mapInfoWindow = createInfoWindow(this);
 
         console.dir(this);
     }
@@ -180,7 +184,8 @@ function createMapMarker (lat, lng, customData) {
             map: map,
             draggable: false,
             animation: google.maps.Animation.DROP,
-            position: googleLatLng
+            position: googleLatLng,
+            icon: 'images/market_icon.png'
         });
         marker.customData = customData;
         console.log('created map marker at: ' + lat + ', ' + lng);
@@ -188,8 +193,11 @@ function createMapMarker (lat, lng, customData) {
     //map.setZoom(12);
     //map.setCenter(marker.getPosition());
             console.log('marker clicked: ', marker.customData);
-            marker.customData.mapInfoWindow.open(map, marker);
-
+            if (selectedMarker) selectedMarker.setIcon('images/market_icon.png'); // reset previously selected marker's icon
+            updateInfoWindow(marker.customData);
+            infoWindow.open(map, marker);
+            marker.setIcon('images/market_icon_selected.png');
+            selectedMarker = marker;
   });
         return(marker);
 }
@@ -204,23 +212,39 @@ function createInfoWindow (place) {
   });
  return(currentInfoWindow);
 }
+
+function updateInfoWindow (place) {
+    infoWindow.setContent(
+        '<h4>' + place.marketName + '</h4>' +
+                '<p>' + place.address + '</p>' +
+                '<p> Hours: ' + place.schedule + '</p>' +
+                '<p> Products: ' + place.products + '</p>'
+        );
+}
       function initialize() {
         var mapOptions = {
           center: { lat: 33.5250, lng: -86.8130},
-          zoom: 8
+          zoom: 12
+
         };
         map = new google.maps.Map(document.getElementById('map-canvas'),
             mapOptions);
         var myLatLng = new google.maps.LatLng(33.5250, -86.8130);
+infoWindow = new google.maps.InfoWindow();
+google.maps.event.addListener(infoWindow, 'closeclick', function() {
+console.log('infoWindow closed');
+selectedMarker.setIcon('images/market_icon.png');
+
+  });
         var marker = new google.maps.Marker({
             map: map,
             draggable: false,
             animation: google.maps.Animation.DROP,
-            position: myLatLng
+            position: myLatLng,
+            zoom: 17
         });
         marker.customData = {marketName: "Test Market", marketID: "12345"};
         google.maps.event.addListener(marker, 'click', function() {
-    map.setZoom(8);
     map.setCenter(marker.getPosition());
             console.log('marker Name: ', marker.customData.marketName);
             console.log('marker ID: ', marker.customData.marketID);

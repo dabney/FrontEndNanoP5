@@ -1,5 +1,7 @@
-Google Maps Javascript API Tutorial
+Google Maps Javascript API Tutorial & Reference
 https://developers.google.com/maps/documentation/javascript/
+https://developers.google.com/maps/documentation/javascript/reference
+https://developers.google.com/maps/documentation/javascript/examples/marker-animations
 
 Google Maps Data Layer Documentation:
 https://developers.google.com/maps/documentation/javascript/datalayer
@@ -36,3 +38,5 @@ http://api.jquery.com/jquery.getjson/
 http://stackoverflow.com/questions/2513417/jquery-getjson-how-do-i-parse-a-flickr-photos-search-rest-api-call
 
 http://jsfiddle.net/b1veacqu/
+
+http://philipwalton.com/articles/what-no-one-told-you-about-z-index/
