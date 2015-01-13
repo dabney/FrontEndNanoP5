@@ -279,8 +279,8 @@ var showFlickrPhotos = function(marketName, lat, lon) {
     var apiURLEnding = '&radius=.2&format=json&nojsoncallback=1';
     var apiURLCombined = apiURLStart + lat + '&lon=' + lon + apiURLEnding;
     console.log('Show Flickr photos: ' + marketName + ',' + lat + ',' + lon);
-    var imagesDiv = document.getElementById('images');
-    imagesDiv.style.display = 'block';
+    var photoAlbum = document.getElementById('photo-album');
+    photoAlbum.style.display = 'block';
     //$.getJSON( "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=farmers market&tag_mode='all'&sort=interestingness-desc&safe_search=1&extras=date_taken&lat=37.786250&lon=-122.404883&radius=.2&format=json&nojsoncallback=1",
 
   $.getJSON( apiURLCombined,
@@ -315,7 +315,7 @@ function(data) {
     currentPhoto = data.photos.photo[i];
     console.dir(currentPhoto);
     currentPhotoURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server + "/" + currentPhoto.id + "_" + currentPhoto.secret + "_s.jpg";
-    $( "<img>" ).attr( "src", currentPhotoURL ).appendTo( "#images" );
+    $( "<img class=\"photo\">" ).attr( "src", currentPhotoURL ).appendTo( "#photo-album" );
     console.log(currentPhotoURL);
 }
 }
@@ -323,7 +323,11 @@ function(data) {
   );
 }
 
-
+var closeFlickrPhotoAlbum = function() {
+    console.log('in close flickr album');
+    $("#photo-album").hide();
+    $( ".photo" ).remove();
+}
 //showFlickrPhotos();
 /*
 

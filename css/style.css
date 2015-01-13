@@ -3,7 +3,7 @@
       img {}
       #app-container {height: 100%; width: 100%}
       #map-canvas { height: 100%; width: 100%; left: 0px; top: 0px; margin: 0; padding: 0; position: absolute; z-index: 1;}
-    #images { display: none; position: absolute; float: bottom; width: 50%; height: 50%; margin: 0; padding: 0; z-index: 1000;}
+    #photo-album { display: none; position: absolute; float: bottom; width: 50%; height: 50%; margin: 0; padding: 0; z-index: 1000;}
         #search-box {position: absolute; z-index: 300; top: 20px; left: 50px;}
     #search-button {position: relative; z-index: 300;}
 
@@ -19,4 +19,9 @@
       .place-list-item {
         border-bottom: 1px solid gray;
         cursor: pointer;
+        }
+        #album-close-button {
+            position:absolute;
+            right: 5 px;
+            top: 5px;
         }

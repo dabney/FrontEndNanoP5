@@ -15,8 +15,11 @@
 <ul class="place-list" data-bind="foreach: placesList">
   <li class="place-list-item" data-bind="text: marketName, click: $parent.setPlace" ></li>
 </ul>
-<div id="images"></div>
 </div>
+<div id="photo-album">
+    <button id="album-close-button" data-bind="click: closeFlickrPhotoAlbum">close</button>
+</div>
+
 
 
 
