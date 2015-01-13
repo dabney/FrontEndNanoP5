@@ -214,14 +214,19 @@ function createInfoWindow (place) {
 }
 
 function updateInfoWindow (place) {
+    console.log(                '<input type=\"image\" src=\"https://s.yimg.com/pw/images/goodies/white-flickr.png\" onclick=\"showFlickrPhotos('
+                    +'\\"'+place.marketName+'\\",'+place.lat+','+place.lng+')\" />');
     infoWindow.setContent(
         '<h4>' + place.marketName + '</h4>' +
                 '<p>' + place.address + '</p>' +
                 '<p> Hours: ' + place.schedule + '</p>' +
-                '<p> Products: ' + place.products + '</p>'
+                '<p> Products: ' + place.products + '</p>' +
+                '<input type=\"image\" src=\"https://s.yimg.com/pw/images/goodies/white-flickr.png\" onclick=\"showFlickrPhotos('
+                    +'\''+place.marketName+'\','+place.lat+','+place.lng+')\" />'
         );
 }
       function initialize() {
+
         var mapOptions = {
           center: { lat: 33.5250, lng: -86.8130},
           zoom: 12
@@ -231,6 +236,7 @@ function updateInfoWindow (place) {
             mapOptions);
         var myLatLng = new google.maps.LatLng(33.5250, -86.8130);
 infoWindow = new google.maps.InfoWindow();
+infoWindow.context = self;
 google.maps.event.addListener(infoWindow, 'closeclick', function() {
 console.log('infoWindow closed');
 selectedMarker.setIcon('images/market_icon.png');
@@ -267,8 +273,17 @@ console.log('placesList length: ' + self.placesList().length);
 
       //initialize();
 }; //end ViewModel
-var showFlickrPhotos = function() {
-  $.getJSON( "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=farmers market&tag_mode='all'&sort=interestingness-desc&safe_search=1&extras=date_taken&lat=37.786250&lon=-122.404883&radius=.2&format=json&nojsoncallback=1",
+
+var showFlickrPhotos = function(marketName, lat, lon) {
+    var apiURLStart = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=farmers market&tag_mode=all&sort=interestingness-desc&safe_search=1&extras=date_taken&lat=';
+    var apiURLEnding = '&radius=.2&format=json&nojsoncallback=1';
+    var apiURLCombined = apiURLStart + lat + '&lon=' + lon + apiURLEnding;
+    console.log('Show Flickr photos: ' + marketName + ',' + lat + ',' + lon);
+    var imagesDiv = document.getElementById('images');
+    imagesDiv.style.display = 'block';
+    //$.getJSON( "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=farmers market&tag_mode='all'&sort=interestingness-desc&safe_search=1&extras=date_taken&lat=37.786250&lon=-122.404883&radius=.2&format=json&nojsoncallback=1",
+
+  $.getJSON( apiURLCombined,
     /*flickrAPI, {
     //method: "flickr.photos.search",
     //api_key: "b96723b2a5af6cf4427f3af91b908836",
@@ -299,7 +314,7 @@ function(data) {
         if (data.photos.photo[i]){
     currentPhoto = data.photos.photo[i];
     console.dir(currentPhoto);
-    currentPhotoURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server + "/" + currentPhoto.id + "_" + currentPhoto.secret + ".jpg";
+    currentPhotoURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server + "/" + currentPhoto.id + "_" + currentPhoto.secret + "_s.jpg";
     $( "<img>" ).attr( "src", currentPhotoURL ).appendTo( "#images" );
     console.log(currentPhotoURL);
 }

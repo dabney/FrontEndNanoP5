@@ -1,12 +1,22 @@
       html, body { height: 100%; margin: 0; padding: 0;}
+      li {list-style-type: none;}
+      img {}
       #app-container {height: 100%; width: 100%}
       #map-canvas { height: 100%; width: 100%; left: 0px; top: 0px; margin: 0; padding: 0; position: absolute; z-index: 1;}
-    #images { height: 50%; margin: 0; padding: 0;}
+    #images { display: none; position: absolute; float: bottom; width: 50%; height: 50%; margin: 0; padding: 0; z-index: 1000;}
         #search-box {position: absolute; z-index: 300; top: 20px; left: 50px;}
     #search-button {position: relative; z-index: 300;}
 
-      .place-list {height: 40%; width: 20%; float: right; position: absolute; top: 5px; right: 5px; z-index: 200; overflow-y: scroll;}
+      .place-list {
+        height: 40%;
+        width: 20%;
+        float: right;
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        z-index: 200;
+        overflow-y: scroll;}
       .place-list-item {
-        border: 1px solid red;
+        border-bottom: 1px solid gray;
         cursor: pointer;
         }
