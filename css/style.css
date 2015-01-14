@@ -5,7 +5,9 @@
       #map-canvas { height: 100%; width: 100%; left: 0px; top: 0px; margin: 0; padding: 0; position: absolute; z-index: 1;}
     #photo-album { display: none; position: absolute; float: bottom; width: 50%; height: 50%; margin: 0; padding: 0; z-index: 1000;}
         #search-box {position: absolute; z-index: 300; top: 20px; left: 50px;}
-    #search-button {position: relative; z-index: 300;}
+    #search-button {position: absolute; top: 20px; left: 200px; z-index: 300;}
+        #location-box {position: absolute; z-index: 300; top: 100px; left: 50px;}
+    #location-button {position: absolute; top: 100px; left: 200px; z-index: 300;}
 
       .place-list {
         height: 40%;

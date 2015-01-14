@@ -11,6 +11,9 @@
     <p>Search: <input id="search-box" type="text" data-bind="textInput: searchInput, valueUpdate: 'input', executeOnEnter: searchInputHandler"/>
 <button id="search-button" data-bind="click: searchInputHandler">find matches</button></p>
 
+    <p>Location: <input id="location-box" type="text" data-bind="textInput: locationInput, valueUpdate: 'input', executeOnEnter: locationInputHandler"/>
+<button id="location-button" data-bind="click: locationInputHandler">change location</button></p>
+
 <div id="menu-container">
 <ul class="place-list" data-bind="foreach: placesList">
   <li class="place-list-item" data-bind="text: marketName, click: $parent.setPlace" ></li>

@@ -35,6 +35,13 @@ var ViewModel = function() {
     console.log('searchInputHandler: ' + self
         .searchInput());
 };
+
+    this.locationInput = ko.observable('Birmingham, AL');
+    locationInputHandler = function() {
+    console.log('locationInputHandler: ' + self
+        .locationInput());
+};
+
 self.setPlace = function(clickedPlace) {
     console.dir(clickedPlace);
     console.log('in setPlace: ' + clickedPlace.marketName);
@@ -214,6 +221,8 @@ function createInfoWindow (place) {
 }
 
 function updateInfoWindow (place) {
+    // Remove apostrophes from the market name
+    var marketNameFixed = place.marketName.replace(/'/g, '');
     console.log(                '<input type=\"image\" src=\"https://s.yimg.com/pw/images/goodies/white-flickr.png\" onclick=\"showFlickrPhotos('
                     +'\\"'+place.marketName+'\\",'+place.lat+','+place.lng+')\" />');
     infoWindow.setContent(
@@ -222,19 +231,19 @@ function updateInfoWindow (place) {
                 '<p> Hours: ' + place.schedule + '</p>' +
                 '<p> Products: ' + place.products + '</p>' +
                 '<input type=\"image\" src=\"https://s.yimg.com/pw/images/goodies/white-flickr.png\" onclick=\"showFlickrPhotos('
-                    +'\''+place.marketName+'\','+place.lat+','+place.lng+')\" />'
+                    +'\''+marketNameFixed+'\','+place.lat+','+place.lng+')\" />'
         );
 }
       function initialize() {
 
         var mapOptions = {
-          center: { lat: 33.5250, lng: -86.8130},
+          center: { lat: 37.7833, lng: -122.4167},
           zoom: 12
 
         };
         map = new google.maps.Map(document.getElementById('map-canvas'),
             mapOptions);
-        var myLatLng = new google.maps.LatLng(33.5250, -86.8130);
+        var myLatLng = new google.maps.LatLng(37.7833, -122.4167);
 infoWindow = new google.maps.InfoWindow();
 infoWindow.context = self;
 google.maps.event.addListener(infoWindow, 'closeclick', function() {
@@ -256,7 +265,8 @@ selectedMarker.setIcon('images/market_icon.png');
             console.log('marker ID: ', marker.customData.marketID);
 
   });
-getFarmersMarketsByZip(35223);
+//getFarmersMarketsByZip(35223);
+getFarmersMarketsByLatLng(37.7833, -122.4167);
 
 /*
 console.log('placesList length: ' + self.placesList().length);
@@ -275,9 +285,15 @@ console.log('placesList length: ' + self.placesList().length);
 }; //end ViewModel
 
 var showFlickrPhotos = function(marketName, lat, lon) {
-    var apiURLStart = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=farmers market&tag_mode=all&sort=interestingness-desc&safe_search=1&extras=date_taken&lat=';
-    var apiURLEnding = '&radius=.2&format=json&nojsoncallback=1';
-    var apiURLCombined = apiURLStart + lat + '&lon=' + lon + apiURLEnding;
+    /* with lat lon 
+    var apiURLPartOne = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=';
+    var apiURLPartTwo = '&tag_mode=all&sort=interestingness-desc&safe_search=1&extras=date_taken&lat=';
+    var apiURLPartThree = '&radius=.2&format=json&nojsoncallback=1';
+    var apiURLCombined = apiURLPartOne + marketName + apiURLPartTwo + lat + '&lon=' + lon + apiURLPartThree;
+    */
+    var apiURLPartOne = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=';
+    var apiURLPartTwo = '&tag_mode=all&sort=interestingness-desc&safe_search=1&extras=date_taken&format=json&nojsoncallback=1';
+    var apiURLCombined = apiURLPartOne + marketName + apiURLPartTwo;
     console.log('Show Flickr photos: ' + marketName + ',' + lat + ',' + lon);
     var photoAlbum = document.getElementById('photo-album');
     photoAlbum.style.display = 'block';
@@ -308,15 +324,20 @@ var showFlickrPhotos = function(marketName, lat, lon) {
 
 function(data) {
     var currentPhoto;
-    var currentPhotoURL;
+    var currentPhotoThumbnailURL;
+   // var currentPhotoURL;
+
     console.log('number of photos: ' + data.photos.photo.length);
     for (var i=0; i<20; i++) {
         if (data.photos.photo[i]){
     currentPhoto = data.photos.photo[i];
     console.dir(currentPhoto);
-    currentPhotoURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server + "/" + currentPhoto.id + "_" + currentPhoto.secret + "_s.jpg";
-    $( "<img class=\"photo\">" ).attr( "src", currentPhotoURL ).appendTo( "#photo-album" );
-    console.log(currentPhotoURL);
+    currentPhotoThumbnailURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server
+         + "/" + currentPhoto.id + "_" + currentPhoto.secret + "_s.jpg";
+    //currentPhotoURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server
+   //      + "/" + currentPhoto.id + "_" + currentPhoto.secret + ".jpg";
+    $( "<img class=\"photo\">" ).attr( "src", currentPhotoThumbnailURL ).appendTo( "#photo-album" );
+    console.log(currentPhotoThumbnailURL);
 }
 }
   }
