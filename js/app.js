@@ -3,15 +3,43 @@ var ViewModel = function() {
     var map;
     var infoWindow;
     var selectedMarker;
+    var unmatchedPlaces = [];
 
-    self.placesList = ko.observableArray([]);
+    this.placesList = ko.observableArray([]);
   //  this.currentPlace = ko.observable(this.placesList()[0]);
 
     this.searchInput = ko.observable('Enter Search Term');
-    searchInputHandler = function() {
-    console.log('searchInputHandler: ' + self
-        .searchInput());
+
+    searchInputHandler = function() { 
+        var inputString;
+        var listLength;
+        var currentPlace;
+        var currentPlaceStringMashup;
+    console.log('searchInputHandler: ' + self.searchInput());
+    listLength = unmatchedPlaces.length;
+    for (var i=listLength-1; i>=0; i--) {
+        self.placesList.push(unmatchedPlaces.pop());
+    }
+    inputString = self.searchInput().toLowerCase();
+console.log('searcing for: ' + inputString);
+    console.dir(self.placesList());
+    listLength = self.placesList().length;
+    for (var i=listLength-1; i>=0; i--) {
+        console.log('checking place #' + i);
+        console.dir(self.placesList()[i]);
+        currentPlace = self.placesList()[i];
+        console.log('currentPlace products: ' + currentPlace.products);
+        currentPlaceStringMashup = currentPlace.marketName + ' ' + currentPlace.address + ' ' + currentPlace.products + ' ' + currentPlace.schedule;
+        currentPlaceStringMashup = currentPlaceStringMashup.toLowerCase();
+        if (currentPlaceStringMashup.indexOf(inputString) == -1) {
+            console.log(inputString + ' not found at ' + currentPlace.marketName);
+            self.placesList.remove(currentPlace);
+            unmatchedPlaces.push(currentPlace);
+        }
+    }
+
 };
+
 
     this.locationInput = ko.observable('San Francisco, CA');
     locationInputHandler = function() {
