@@ -8,6 +8,7 @@
     #search-button {position: absolute; top: 20px; left: 200px; z-index: 300;}
         #location-box {position: absolute; z-index: 300; top: 100px; left: 50px;}
     #location-button {position: absolute; top: 100px; left: 200px; z-index: 300;}
+        #pac-input {position: absolute; z-index: 300; top: 150px; left: 50px;}
 
       .place-list {
         height: 40%;

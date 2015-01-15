@@ -4,6 +4,7 @@ var ViewModel = function() {
     var infoWindow;
     var selectedMarker;
     var unmatchedPlaces = [];
+    var googlePlacesSearch;
 
     this.placesList = ko.observableArray([]);
   //  this.currentPlace = ko.observable(this.placesList()[0]);
@@ -46,9 +47,15 @@ console.log('searcing for: ' + inputString);
 
 
     this.locationInput = ko.observable('San Francisco, CA');
+//    var searchBox = new google.maps.places.SearchBox($("#pac-input"));
+
     locationInputHandler = function() {
+        var googlePlace;
     console.log('locationInputHandler: ' + self
         .locationInput());
+    googlePlace = self.googlePlacesSearch.getPlaces()[0];
+    console.dir(googlePlace);
+    console.dir(googlePlace.geometry.location);
 };
 
 self.setPlace = function(clickedPlace) {
@@ -218,11 +225,21 @@ closeFlickrPhotoAlbum();
             console.log('marker ID: ', marker.customData.marketID);
 
   });
+
+          var input = /** @type {HTMLInputElement} */(
+      document.getElementById('pac-input'));
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+  self.googlePlacesSearch = new google.maps.places.SearchBox(
+    /** @type {HTMLInputElement} */(input));
+
 //getFarmersMarketsByZip(35223);
 getFarmersMarketsByLatLng(37.7833, -122.4167);
 
 
       };
+
+
       google.maps.event.addDomListener(window, 'load', initialize);
 
 }; //end ViewModel
