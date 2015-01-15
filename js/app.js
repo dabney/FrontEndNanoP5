@@ -226,12 +226,12 @@ closeFlickrPhotoAlbum();
 
   });
 
-          var input = /** @type {HTMLInputElement} */(
-      document.getElementById('pac-input'));
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+          var locationInputBox = /** @type {HTMLInputElement} */(
+      document.getElementById('location-box'));
+ // map.controls[google.maps.ControlPosition.TOP_LEFT].push(locationInputBox);
 
   self.googlePlacesSearch = new google.maps.places.SearchBox(
-    /** @type {HTMLInputElement} */(input));
+    /** @type {HTMLInputElement} */(locationInputBox));
 
 //getFarmersMarketsByZip(35223);
 getFarmersMarketsByLatLng(37.7833, -122.4167);
