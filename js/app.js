@@ -18,7 +18,9 @@ var ViewModel = function() {
     console.log('searchInputHandler: ' + self.searchInput());
     listLength = unmatchedPlaces.length;
     for (var i=listLength-1; i>=0; i--) {
-        self.placesList.push(unmatchedPlaces.pop());
+        currentPlace = unmatchedPlaces.pop();
+        currentPlace.mapMarker.setVisible(true);
+        self.placesList.push(currentPlace);
     }
     inputString = self.searchInput().toLowerCase();
 console.log('searcing for: ' + inputString);
@@ -33,6 +35,8 @@ console.log('searcing for: ' + inputString);
         currentPlaceStringMashup = currentPlaceStringMashup.toLowerCase();
         if (currentPlaceStringMashup.indexOf(inputString) == -1) {
             console.log(inputString + ' not found at ' + currentPlace.marketName);
+                    currentPlace.mapMarker.setVisible(false);
+
             self.placesList.remove(currentPlace);
             unmatchedPlaces.push(currentPlace);
         }
@@ -138,7 +142,7 @@ function createMapMarker (lat, lng, customData) {
         var marker = new google.maps.Marker({
             map: map,
             draggable: false,
-            animation: google.maps.Animation.DROP,
+        //    animation: google.maps.Animation.DROP,
             position: googleLatLng,
             icon: 'images/market_icon.png'
         });
