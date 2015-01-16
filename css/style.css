@@ -3,7 +3,16 @@
       img {}
       #app-container {height: 100%; width: 100%}
       #map-canvas { height: 100%; width: 100%; left: 0px; top: 0px; margin: 0; padding: 0; position: absolute; z-index: 1;}
-    #photo-album { display: none; position: absolute; float: bottom; width: 50%; height: 50%; margin: 0; padding: 0; z-index: 1000;}
+    #photo-album { 
+        display: none;
+        position: absolute;
+        float: bottom;
+        width: 30%;
+        height: 30%;
+        margin: 0;
+        padding: 0;
+        z-index: 1000;
+        overflow-y: scroll;}
         #search-box {position: absolute; z-index: 300; top: 20px; left: 50px;}
     #search-button {position: absolute; top: 20px; left: 200px; z-index: 300;}
         #location-box {position: absolute; z-index: 300; top: 100px; left: 50px;}
@@ -13,6 +22,7 @@
       .place-list {
         height: 40%;
         width: 20%;
+        background-color: white;
         float: right;
         position: absolute;
         top: 5px;
@@ -25,7 +35,7 @@
         }
         #album-close-button {
             position:absolute;
-            right: 5 px;
+            float: right;
             top: 5px;
         }
 

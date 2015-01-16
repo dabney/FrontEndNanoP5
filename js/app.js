@@ -1,7 +1,9 @@
+    var infoWindowContentString;
+        var infoWindow;
+
 var ViewModel = function() {
     var self = this;
     var map;
-    var infoWindow;
     var selectedMarker;
     var unmatchedPlaces = [];
     var googlePlacesSearch;
@@ -124,7 +126,6 @@ function getFarmersMarketsByLatLng(lat, lng) {
 
 
 function getFarmersMarketDetails(place) {
-    console.log('getting market details: ' + place.marketID);
     $.ajax({
         type: "GET",
         contentType: "application/json; charset=utf-8",
@@ -135,7 +136,6 @@ function getFarmersMarketDetails(place) {
         cache: false,
         // In the success function this will be the context which is set to 'place'
        success: function(detailResults) {
-        console.log('this.marketName: ' + this.marketName);
         if (detailResults) {
         var marketDetails = detailResults.marketdetails;
         var googleLink = marketDetails.GoogleLink;
@@ -168,11 +168,9 @@ function createMapMarker (lat, lng, customData) {
             icon: 'images/carrot_in_ground.png'
         });
         marker.customData = customData;
-        console.log('created map marker at: ' + lat + ', ' + lng);
         google.maps.event.addListener(marker, 'click', function() {
     //map.setZoom(12);
     //map.setCenter(marker.getPosition());
-            console.log('marker clicked: ', marker.customData);
             if (selectedMarker) selectedMarker.setIcon('images/carrot_in_ground.png'); // reset previously selected marker's icon
             updateInfoWindow(marker.customData);
             infoWindow.open(map, marker);
@@ -194,24 +192,34 @@ function createInfoWindow (place) {
 }
 
 function updateInfoWindow (place) {
-    // Remove apostrophes from the market name
+    // Remove apostrophes from the market name for the Flickr photo search
     var marketNameFixed = place.marketName.replace(/'/g, '');
-    console.log(                '<input type=\"image\" src=\"https://s.yimg.com/pw/images/goodies/white-flickr.png\" onclick=\"showFlickrPhotos('
-                    +'\\"'+place.marketName+'\\",'+place.lat+','+place.lng+')\" />');
-    infoWindow.setContent(
+    infoWindowContentString = 
         '<h4>' + place.marketName + '</h4>' +
                 '<p>' + place.address + '</p>' +
-                '<p> Hours: ' + place.schedule + '</p>' +
+                '<p> Hours: ' + place.schedule.replace(/\<br\>/g, '') + '</p>' +
                 '<p> Products: ' + place.products + '</p>' +
                 '<input type=\"image\" src=\"https://s.yimg.com/pw/images/goodies/white-flickr.png\" onclick=\"showFlickrPhotos('
-                    +'\''+marketNameFixed+'\','+place.lat+','+place.lng+')\" />'
-        );
+                    +'\''+marketNameFixed+'\','+place.lat+','+place.lng+')\" />';
+
+    infoWindowContentString = 
+        '<h4>' + place.marketName +
+                '<br>' + place.address + '</h4>' +
+                                '<ul>' +
+                '<li>' + 'Schedule: ' + place.schedule.replace(/\<br\>/g, '') + '</li>' +
+                '<li>' + 'Products: ' + place.products + '</li>' +
+                '<li>' + '<input type=\"image\" src=\"https://s.yimg.com/pw/images/goodies/white-flickr.png\" onclick=\"showFlickrPhotos('
+                    +'\''+marketNameFixed+'\','+place.lat+','+place.lng+')\" />' + '</li>' +
+                '</ul>';
+
+           infoWindow.setContent(infoWindowContentString );
 }
       function initialize() {
 
         var mapOptions = {
           center: { lat: 37.7833, lng: -122.4167},
-          zoom: 12
+          zoom: 12,
+          disableDefaultUI: true
 
         };
         map = new google.maps.Map(document.getElementById('map-canvas'),
@@ -219,43 +227,20 @@ function updateInfoWindow (place) {
 infoWindow = new google.maps.InfoWindow();
 infoWindow.context = self;
 google.maps.event.addListener(infoWindow, 'closeclick', function() {
-console.log('infoWindow closed');
 selectedMarker.setIcon('images/carrot_in_ground.png');
-closeFlickrPhotoAlbum();
+//closeFlickrPhotoAlbum();
 
   });
-/*
-        var myLatLng = new google.maps.LatLng(37.7833, -122.4167);
 
-        var marker = new google.maps.Marker({
-            map: map,
-            draggable: false,
-            animation: google.maps.Animation.DROP,
-            position: myLatLng,
-            zoom: 17
-        });
-        marker.customData = {marketName: "Test Market", marketID: "12345"};
-        google.maps.event.addListener(marker, 'click', function() {
-    map.setCenter(marker.getPosition());
-            console.log('marker Name: ', marker.customData.marketName);
-            console.log('marker ID: ', marker.customData.marketID);
 
-  }); */
-
-          var locationInputBox = /** @type {HTMLInputElement} */(
-      document.getElementById('location-box'));
+          var locationInputBox = (document.getElementById('location-box'));
  // map.controls[google.maps.ControlPosition.TOP_LEFT].push(locationInputBox);
 
-  self.googlePlacesSearch = new google.maps.places.SearchBox(
-    /** @type {HTMLInputElement} */(locationInputBox));
+  self.googlePlacesSearch = new google.maps.places.SearchBox((locationInputBox));
 
 //getFarmersMarketsByZip(35223);
 getFarmersMarketsByLatLng(37.7833, -122.4167);
-
-
       };
-
-
       google.maps.event.addDomListener(window, 'load', initialize);
 
 }; //end ViewModel
@@ -271,8 +256,8 @@ var showFlickrPhotos = function(marketName, lat, lon) {
     var apiURLPartTwo = '&tag_mode=all&sort=interestingness-desc&safe_search=1&extras=date_taken&format=json&nojsoncallback=1';
     var apiURLCombined = apiURLPartOne + marketName + apiURLPartTwo;
     console.log('Show Flickr photos: ' + marketName + ',' + lat + ',' + lon);
-    var photoAlbum = document.getElementById('photo-album');
-    photoAlbum.style.display = 'block';
+  //  var photoAlbum = document.getElementById('photo-album');
+  //  photoAlbum.style.display = 'block';
     //$.getJSON( "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=farmers market&tag_mode='all'&sort=interestingness-desc&safe_search=1&extras=date_taken&lat=37.786250&lon=-122.404883&radius=.2&format=json&nojsoncallback=1",
 
   $.getJSON( apiURLCombined,
@@ -283,19 +268,31 @@ function(data) {
    // var currentPhotoURL;
 
     console.log('number of photos: ' + data.photos.photo.length);
+    if (data.photos.photo.length > 0) {
     for (var i=0; i<20; i++) {
         if (data.photos.photo[i]){
     currentPhoto = data.photos.photo[i];
     console.dir(currentPhoto);
     currentPhotoThumbnailURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server
          + "/" + currentPhoto.id + "_" + currentPhoto.secret + "_s.jpg";
-    //currentPhotoURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server
-   //      + "/" + currentPhoto.id + "_" + currentPhoto.secret + ".jpg";
-    $( "<img class=\"photo\">" ).attr( "src", currentPhotoThumbnailURL ).appendTo( "#photo-album" );
+    currentPhotoURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server
+         + "/" + currentPhoto.id + "_" + currentPhoto.secret + ".jpg";
+  //  $( "<img class=\"photo\">" ).attr( "src", currentPhotoThumbnailURL ).appendTo( "#photo-album" );
+    infoWindowContentString = infoWindowContentString + "<img class=\"photo\" src=" + currentPhotoThumbnailURL + ">";
+    infoWindow.setContent(infoWindowContentString);
     console.log(currentPhotoThumbnailURL);
 }
 }
-  }
+}
+else {
+    console.log('no photos found');
+        infoWindowContentString = infoWindowContentString + "No Flickr Photos Found :(";
+                infoWindow.setContent(infoWindowContentString);
+
+}
+
+}
+
   );
 }
 
