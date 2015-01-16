@@ -11,7 +11,7 @@ var ViewModel = function() {
     this.placesList = ko.observableArray([]);
   //  this.currentPlace = ko.observable(this.placesList()[0]);
 
-    this.searchInput = ko.observable('Enter Search Term');
+    this.searchInput = ko.observable('Enter name, products sold, etc.');
 
     searchInputHandler = function() { 
         var inputString;
@@ -209,7 +209,7 @@ function updateInfoWindow (place) {
                 '<li>' + 'Schedule: ' + place.schedule.replace(/\<br\>/g, '') + '</li>' +
                 '<li>' + 'Products: ' + place.products + '</li>' +
                 '<li>' + '<input type=\"image\" src=\"https://s.yimg.com/pw/images/goodies/white-flickr.png\" onclick=\"showFlickrPhotos('
-                    +'\''+marketNameFixed+'\','+place.lat+','+place.lng+')\" />' + '</li>' +
+                    +'\''+marketNameFixed+'\','+place.lat+','+place.lng+')\" /> Click to show Flickr photos!' + '</li>' +
                 '</ul>';
 
            infoWindow.setContent(infoWindowContentString );
@@ -278,7 +278,10 @@ function(data) {
     currentPhotoURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server
          + "/" + currentPhoto.id + "_" + currentPhoto.secret + ".jpg";
   //  $( "<img class=\"photo\">" ).attr( "src", currentPhotoThumbnailURL ).appendTo( "#photo-album" );
-    infoWindowContentString = infoWindowContentString + "<img class=\"photo\" src=" + currentPhotoThumbnailURL + ">";
+    infoWindowContentString = infoWindowContentString +
+    "<a href=" + currentPhotoURL + " target=\"_blank\"" +
+    "><img class=\"photo\" src=" + 
+    currentPhotoThumbnailURL + ">";
     infoWindow.setContent(infoWindowContentString);
     console.log(currentPhotoThumbnailURL);
 }
