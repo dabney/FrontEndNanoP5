@@ -51,11 +51,25 @@ console.log('searcing for: ' + inputString);
 
     locationInputHandler = function() {
         var googlePlace;
+        var listLength;
     console.log('locationInputHandler: ' + self
         .locationInput());
     googlePlace = self.googlePlacesSearch.getPlaces()[0];
     console.dir(googlePlace);
     console.dir(googlePlace.geometry.location);
+    map.setCenter(googlePlace.geometry.location);
+console.log('changing location; current placesList:' + self.placesList());
+listLength = self.placesList().length;
+    for (var i=listLength-1; i>=0; i--) {
+        currentPlace = self.placesList().pop();
+        currentPlace.mapMarker.setMap(null);
+    }
+    console.log('changing location; empty placesList:' + self.placesList());
+
+//self.placesList().splice(0, self.placesList().length);
+    getFarmersMarketsByLatLng(googlePlace.geometry.location.lat(), googlePlace.geometry.location.lng());
+    console.log('changing location; refilled placesList:' + self.placesList());
+
 };
 
 self.setPlace = function(clickedPlace) {
@@ -202,7 +216,6 @@ function updateInfoWindow (place) {
         };
         map = new google.maps.Map(document.getElementById('map-canvas'),
             mapOptions);
-        var myLatLng = new google.maps.LatLng(37.7833, -122.4167);
 infoWindow = new google.maps.InfoWindow();
 infoWindow.context = self;
 google.maps.event.addListener(infoWindow, 'closeclick', function() {
@@ -211,6 +224,9 @@ selectedMarker.setIcon('images/market_icon.png');
 closeFlickrPhotoAlbum();
 
   });
+/*
+        var myLatLng = new google.maps.LatLng(37.7833, -122.4167);
+
         var marker = new google.maps.Marker({
             map: map,
             draggable: false,
@@ -224,7 +240,7 @@ closeFlickrPhotoAlbum();
             console.log('marker Name: ', marker.customData.marketName);
             console.log('marker ID: ', marker.customData.marketID);
 
-  });
+  }); */
 
           var locationInputBox = /** @type {HTMLInputElement} */(
       document.getElementById('location-box'));
