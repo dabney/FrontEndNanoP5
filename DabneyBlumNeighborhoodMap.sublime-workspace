@@ -39,31 +39,31 @@
 			"file": "index.html",
 			"settings":
 			{
-				"buffer_size": 687,
-				"line_ending": "Unix"
+				"buffer_size": 1288,
+				"line_ending": "Windows"
 			}
 		},
 		{
 			"file": "css/style.css",
 			"settings":
 			{
-				"buffer_size": 69,
-				"line_ending": "Unix"
+				"buffer_size": 1289,
+				"line_ending": "Windows"
 			}
 		},
 		{
 			"file": "js/app.js",
 			"settings":
 			{
-				"buffer_size": 4557,
-				"line_ending": "Unix"
+				"buffer_size": 12353,
+				"line_ending": "Windows"
 			}
 		},
 		{
 			"file": "ResourcesUsed",
 			"settings":
 			{
-				"buffer_size": 931,
+				"buffer_size": 1752,
 				"line_ending": "Windows"
 			}
 		}
@@ -143,6 +143,45 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"market_icon",
+			"myLatLng",
+			"marker",
+			"pop",
+			"list().pop",
+			"setVisible",
+			"input",
+			"marker",
+			"placeslist.push",
+			"placeslist",
+			"updateInfoWindow",
+			"market_icon",
+			"selectedMarker",
+			"detailResultHandler",
+			"searchResultshandler",
+			"currentPlace",
+			"locSearch",
+			"getFarmersMarketsByLatLng",
+			"33",
+			"searchInput",
+			"search",
+			"close-button",
+			"images",
+			"img",
+			"showFlickrPhotos",
+			"flickr",
+			"block",
+			"search",
+			"png",
+			"selectedMarker",
+			"png",
+			"currentPlace",
+			"zoom",
+			"infowindow",
+			"zoo",
+			"getFarmersMarketDetails",
+			"initialize",
+			"name",
+			"id",
 			"update",
 			"getscrolltop",
 			"changePizzaSizes",
@@ -223,15 +262,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 687,
+						"buffer_size": 1288,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								361,
-								361
+								682,
+								682
 							]
 						],
 						"settings":
@@ -241,10 +280,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 90.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -253,15 +292,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 69,
+						"buffer_size": 1289,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								69,
-								69
+								1278,
+								1278
 							]
 						],
 						"settings":
@@ -274,7 +313,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -283,15 +322,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4557,
+						"buffer_size": 12353,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4431,
-								4431
+								6549,
+								6549
 							]
 						],
 						"settings":
@@ -301,7 +340,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 900.0,
+						"translation.y": 2233.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
@@ -313,15 +352,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 931,
+						"buffer_size": 1752,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								931,
-								931
+								1628,
+								1628
 							]
 						],
 						"settings":
@@ -329,7 +368,7 @@
 							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 315.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,

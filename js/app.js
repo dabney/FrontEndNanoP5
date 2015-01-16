@@ -78,9 +78,9 @@ self.setPlace = function(clickedPlace) {
     updateInfoWindow(clickedPlace);
     infoWindow.open(map, clickedPlace.mapMarker);
     if (selectedMarker) {
-        selectedMarker.setIcon('images/market_icon.png');
+        selectedMarker.setIcon('images/carrot_in_ground.png');
     };
-    clickedPlace.mapMarker.setIcon('images/market_icon_selected.png');
+    clickedPlace.mapMarker.setIcon('images/carrot_picked.png');
     selectedMarker = clickedPlace.mapMarker;
 }
 
@@ -165,7 +165,7 @@ function createMapMarker (lat, lng, customData) {
             draggable: false,
         //    animation: google.maps.Animation.DROP,
             position: googleLatLng,
-            icon: 'images/market_icon.png'
+            icon: 'images/carrot_in_ground.png'
         });
         marker.customData = customData;
         console.log('created map marker at: ' + lat + ', ' + lng);
@@ -173,10 +173,10 @@ function createMapMarker (lat, lng, customData) {
     //map.setZoom(12);
     //map.setCenter(marker.getPosition());
             console.log('marker clicked: ', marker.customData);
-            if (selectedMarker) selectedMarker.setIcon('images/market_icon.png'); // reset previously selected marker's icon
+            if (selectedMarker) selectedMarker.setIcon('images/carrot_in_ground.png'); // reset previously selected marker's icon
             updateInfoWindow(marker.customData);
             infoWindow.open(map, marker);
-            marker.setIcon('images/market_icon_selected.png');
+            marker.setIcon('images/carrot_picked.png');
             selectedMarker = marker;
   });
         return(marker);
@@ -220,7 +220,7 @@ infoWindow = new google.maps.InfoWindow();
 infoWindow.context = self;
 google.maps.event.addListener(infoWindow, 'closeclick', function() {
 console.log('infoWindow closed');
-selectedMarker.setIcon('images/market_icon.png');
+selectedMarker.setIcon('images/carrot_in_ground.png');
 closeFlickrPhotoAlbum();
 
   });
