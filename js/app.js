@@ -207,12 +207,11 @@ function updateInfoWindow (place) {
                     +'\''+marketNameFixed+'\','+place.lat+','+place.lng+')\" />';
     */
     infoWindowContentString = 
-        '<h4>' + place.marketName +
-                '<br>' + place.address + '</h4>' +
-                                '<ul>' +
-                '<li>' + 'Schedule: ' + place.schedule.replace(/\<br\>/g, '') + '</li>' +
-                '<li>' + 'Products: ' + place.products + '</li>' +
-                '<li>Flickr Photos:</li>' +
+        '<h4>' + place.marketName + '</h4><br>' +
+                '<h4>' + place.address + '</h4><br>' +
+'Schedule: ' + place.schedule.replace(/\<br\>/g, '') + '<br>' +
+'Products: ' + place.products + '<br>' +
+                'Flickr Photos (click to open in new window):<br>' +
                 /*
                 '<li>' + '<input type=\"image\" src=\"https://s.yimg.com/pw/images/goodies/white-flickr.png\" onclick=\"showFlickrPhotos('
                     +'\''+marketNameFixed+'\','+place.lat+','+place.lng+')\" /> Click to show Flickr photos!' + '</li>' + */
@@ -256,7 +255,6 @@ getFarmersMarketsByLatLng(37.7833, -122.4167);
       };
       google.maps.event.addDomListener(window, 'load', initialize);
 
-}; //end ViewModel
 
 var showFlickrPhotos = function(marketName, lat, lon) {
     /* with lat lon 
@@ -282,7 +280,7 @@ function(data) {
 
     console.log('number of photos: ' + data.photos.photo.length);
     if (data.photos.photo.length > 0) {
-    for (var i=0; i<7; i++) {
+    for (var i=0; i<8; i++) {
         if (data.photos.photo[i]){
     currentPhoto = data.photos.photo[i];
     console.dir(currentPhoto);
@@ -311,6 +309,7 @@ else {
 
   );
 }
+}; //end ViewModel
 
 var closeFlickrPhotoAlbum = function() {
     console.log('in close flickr album');
