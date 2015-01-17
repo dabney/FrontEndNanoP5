@@ -7,6 +7,7 @@ var ViewModel = function() {
     var selectedMarker;
     var unmatchedPlaces = [];
     var googlePlacesSearch;
+    var currentMapLatLng;
 
     this.placesList = ko.observableArray([]);
   //  this.currentPlace = ko.observable(this.placesList()[0]);
@@ -60,6 +61,7 @@ console.log('searcing for: ' + inputString);
     console.dir(googlePlace);
     console.dir(googlePlace.geometry.location);
     map.setCenter(googlePlace.geometry.location);
+    currentMapLatLng = googlePlace.geometry.location;
 console.log('changing location; current placesList:' + self.placesList());
 listLength = self.placesList().length;
     for (var i=listLength-1; i>=0; i--) {
@@ -182,6 +184,7 @@ function createMapMarker (lat, lng, customData) {
 
 function createInfoWindow (place) {
  var currentInfoWindow = new google.maps.InfoWindow({
+      disableAutoPan: false,
       content: '<h4>' + place.marketName + '</h4>' +
                 '<p>' + place.address + '</p>' +
                 '<p> Hours: ' + place.schedule + '</p>' +
@@ -194,6 +197,7 @@ function createInfoWindow (place) {
 function updateInfoWindow (place) {
     // Remove apostrophes from the market name for the Flickr photo search
     var marketNameFixed = place.marketName.replace(/'/g, '');
+    /*
     infoWindowContentString = 
         '<h4>' + place.marketName + '</h4>' +
                 '<p>' + place.address + '</p>' +
@@ -201,31 +205,40 @@ function updateInfoWindow (place) {
                 '<p> Products: ' + place.products + '</p>' +
                 '<input type=\"image\" src=\"https://s.yimg.com/pw/images/goodies/white-flickr.png\" onclick=\"showFlickrPhotos('
                     +'\''+marketNameFixed+'\','+place.lat+','+place.lng+')\" />';
-
+    */
     infoWindowContentString = 
         '<h4>' + place.marketName +
                 '<br>' + place.address + '</h4>' +
                                 '<ul>' +
                 '<li>' + 'Schedule: ' + place.schedule.replace(/\<br\>/g, '') + '</li>' +
                 '<li>' + 'Products: ' + place.products + '</li>' +
+                '<li>Flickr Photos:</li>' +
+                /*
                 '<li>' + '<input type=\"image\" src=\"https://s.yimg.com/pw/images/goodies/white-flickr.png\" onclick=\"showFlickrPhotos('
-                    +'\''+marketNameFixed+'\','+place.lat+','+place.lng+')\" /> Click to show Flickr photos!' + '</li>' +
+                    +'\''+marketNameFixed+'\','+place.lat+','+place.lng+')\" /> Click to show Flickr photos!' + '</li>' + */
                 '</ul>';
 
            infoWindow.setContent(infoWindowContentString );
+                    //  infoWindow.setContent(document.getElementById('photo-album'));
+showFlickrPhotos(marketNameFixed, place.lat, place.lng);
+
 }
       function initialize() {
 
         var mapOptions = {
           center: { lat: 37.7833, lng: -122.4167},
-          zoom: 12,
+          zoom: 13,
           disableDefaultUI: true
 
         };
         map = new google.maps.Map(document.getElementById('map-canvas'),
             mapOptions);
+        currentMapLatLng={ lat: 37.7833, lng: -122.4167};
 infoWindow = new google.maps.InfoWindow();
 infoWindow.context = self;
+google.maps.event.addListener(window, 'resize', function() {
+    map.setCenter(currentMapLatLng);
+});
 google.maps.event.addListener(infoWindow, 'closeclick', function() {
 selectedMarker.setIcon('images/carrot_in_ground.png');
 //closeFlickrPhotoAlbum();
@@ -269,7 +282,7 @@ function(data) {
 
     console.log('number of photos: ' + data.photos.photo.length);
     if (data.photos.photo.length > 0) {
-    for (var i=0; i<20; i++) {
+    for (var i=0; i<7; i++) {
         if (data.photos.photo[i]){
     currentPhoto = data.photos.photo[i];
     console.dir(currentPhoto);
