@@ -1,5 +1,3 @@
-    var infoWindowContentString;
-        var infoWindow;
 
 var ViewModel = function() {
     var self = this;
@@ -8,18 +6,20 @@ var ViewModel = function() {
     var unmatchedPlaces = [];
     var googlePlacesSearch;
     var currentMapLatLng;
+    var infoWindowContentString;
+        var infoWindow;
 
     this.placesList = ko.observableArray([]);
   //  this.currentPlace = ko.observable(this.placesList()[0]);
 
-    this.searchInput = ko.observable('Enter name, products sold, etc.');
+    this.searchInput = ko.observable('');
 
     searchInputHandler = function() { 
         var inputString;
         var listLength;
         var currentPlace;
         var currentPlaceStringMashup;
-    console.log('searchInputHandler: ' + self.searchInput());
+ //   console.log('searchInputHandler: ' + self.searchInput());
     listLength = unmatchedPlaces.length;
     for (var i=listLength-1; i>=0; i--) {
         currentPlace = unmatchedPlaces.pop();
@@ -27,18 +27,18 @@ var ViewModel = function() {
         self.placesList.push(currentPlace);
     }
     inputString = self.searchInput().toLowerCase();
-console.log('searcing for: ' + inputString);
-    console.dir(self.placesList());
+//console.log('searcing for: ' + inputString);
+ //   console.dir(self.placesList());
     listLength = self.placesList().length;
     for (var i=listLength-1; i>=0; i--) {
-        console.log('checking place #' + i);
-        console.dir(self.placesList()[i]);
+   //     console.log('checking place #' + i);
+    //    console.dir(self.placesList()[i]);
         currentPlace = self.placesList()[i];
-        console.log('currentPlace products: ' + currentPlace.products);
+     //   console.log('currentPlace products: ' + currentPlace.products);
         currentPlaceStringMashup = currentPlace.marketName + ' ' + currentPlace.address + ' ' + currentPlace.products + ' ' + currentPlace.schedule;
         currentPlaceStringMashup = currentPlaceStringMashup.toLowerCase();
         if (currentPlaceStringMashup.indexOf(inputString) == -1) {
-            console.log(inputString + ' not found at ' + currentPlace.marketName);
+        //    console.log(inputString + ' not found at ' + currentPlace.marketName);
                     currentPlace.mapMarker.setVisible(false);
 
             self.placesList.remove(currentPlace);
@@ -55,10 +55,11 @@ console.log('searcing for: ' + inputString);
     locationInputHandler = function() {
         var googlePlace;
         var listLength;
-    console.log('locationInputHandler: ' + self
-        .locationInput());
+  console.log('locationInputHandler: ' + self.locationInput());
+   //   googlePlace = self.googlePlacesSearch.getPlaces()[0];
+
     googlePlace = self.googlePlacesSearch.getPlaces()[0];
-    console.dir(googlePlace);
+   console.dir(googlePlace);
     console.dir(googlePlace.geometry.location);
     map.setCenter(googlePlace.geometry.location);
     currentMapLatLng = googlePlace.geometry.location;
@@ -77,15 +78,19 @@ listLength = self.placesList().length;
 };
 
 self.setPlace = function(clickedPlace) {
-    console.dir(clickedPlace);
-    console.log('in setPlace: ' + clickedPlace.marketName);
+ //   console.dir(clickedPlace);
+ //   console.log('in setPlace: ' + clickedPlace.marketName);
     updateInfoWindow(clickedPlace);
     infoWindow.open(map, clickedPlace.mapMarker);
     if (selectedMarker) {
         selectedMarker.setIcon('images/carrot_in_ground.png');
     };
-    clickedPlace.mapMarker.setIcon('images/carrot_picked.png');
     selectedMarker = clickedPlace.mapMarker;
+    selectedMarker.setIcon('images/carrot_picked.png');
+    map.setCenter(selectedMarker.getPosition());
+                map.panBy(0, -150);
+
+
 }
 
  function getFarmersMarketsByZip(zip) {
@@ -153,7 +158,7 @@ function getFarmersMarketDetails(place) {
         this.mapMarker = createMapMarker(this.lat, this.lng, this);
         //this.mapInfoWindow = createInfoWindow(this);
 
-        console.dir(this);
+  //      console.dir(this);
     }
     }
     });
@@ -178,6 +183,9 @@ function createMapMarker (lat, lng, customData) {
             infoWindow.open(map, marker);
             marker.setIcon('images/carrot_picked.png');
             selectedMarker = marker;
+                map.setCenter(selectedMarker.getPosition());
+
+            map.panBy(0, -150);
   });
         return(marker);
 }
@@ -185,6 +193,7 @@ function createMapMarker (lat, lng, customData) {
 function createInfoWindow (place) {
  var currentInfoWindow = new google.maps.InfoWindow({
       disableAutoPan: false,
+      maxWidth: 100,
       content: '<h4>' + place.marketName + '</h4>' +
                 '<p>' + place.address + '</p>' +
                 '<p> Hours: ' + place.schedule + '</p>' +
@@ -211,7 +220,7 @@ function updateInfoWindow (place) {
                 '<h4>' + place.address + '</h4><br>' +
 'Schedule: ' + place.schedule.replace(/\<br\>/g, '') + '<br>' +
 'Products: ' + place.products + '<br>' +
-                'Flickr Photos (click to open in new window):<br>' +
+                'Flickr Photos (click to open photo in new window):<br>' +
                 /*
                 '<li>' + '<input type=\"image\" src=\"https://s.yimg.com/pw/images/goodies/white-flickr.png\" onclick=\"showFlickrPhotos('
                     +'\''+marketNameFixed+'\','+place.lat+','+place.lng+')\" /> Click to show Flickr photos!' + '</li>' + */
@@ -233,8 +242,14 @@ showFlickrPhotos(marketNameFixed, place.lat, place.lng);
         map = new google.maps.Map(document.getElementById('map-canvas'),
             mapOptions);
         currentMapLatLng={ lat: 37.7833, lng: -122.4167};
-infoWindow = new google.maps.InfoWindow();
+infoWindow = new google.maps.InfoWindow(
+    {
+      disableAutoPan: false,
+      maxWidth: 310
+  }
+    );
 infoWindow.context = self;
+
 google.maps.event.addListener(window, 'resize', function() {
     map.setCenter(currentMapLatLng);
 });
@@ -266,7 +281,7 @@ var showFlickrPhotos = function(marketName, lat, lon) {
     var apiURLPartOne = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=';
     var apiURLPartTwo = '&tag_mode=all&sort=interestingness-desc&safe_search=1&extras=date_taken&format=json&nojsoncallback=1';
     var apiURLCombined = apiURLPartOne + marketName + apiURLPartTwo;
-    console.log('Show Flickr photos: ' + marketName + ',' + lat + ',' + lon);
+  //  console.log('Show Flickr photos: ' + marketName + ',' + lat + ',' + lon);
   //  var photoAlbum = document.getElementById('photo-album');
   //  photoAlbum.style.display = 'block';
     //$.getJSON( "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=farmers market&tag_mode='all'&sort=interestingness-desc&safe_search=1&extras=date_taken&lat=37.786250&lon=-122.404883&radius=.2&format=json&nojsoncallback=1",
@@ -283,7 +298,7 @@ function(data) {
     for (var i=0; i<8; i++) {
         if (data.photos.photo[i]){
     currentPhoto = data.photos.photo[i];
-    console.dir(currentPhoto);
+  //  console.dir(currentPhoto);
     currentPhotoThumbnailURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server
          + "/" + currentPhoto.id + "_" + currentPhoto.secret + "_s.jpg";
     currentPhotoURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server
@@ -300,7 +315,7 @@ function(data) {
 }
 else {
     console.log('no photos found');
-        infoWindowContentString = infoWindowContentString + "No Flickr Photos Found :(";
+        infoWindowContentString = infoWindowContentString + "No Flickr Photos Found :(<br>";
                 infoWindow.setContent(infoWindowContentString);
 
 }
@@ -312,7 +327,7 @@ else {
 }; //end ViewModel
 
 var closeFlickrPhotoAlbum = function() {
-    console.log('in close flickr album');
+//    console.log('in close flickr album');
     $("#photo-album").hide();
     $( ".photo" ).remove();
 }
