@@ -16,10 +16,9 @@
 <button id="search-button" type="submit" data-bind="click: searchInputHandler">find matches</button>
 </form>
 
-<form data-bind="submit: locationInputHandler">
-    <input id="location-box" type="text" data-bind="textInput: locationInput, valueUpdate: 'input', executeOnEnter: locationInputHandler"/>
-<button id="location-button" type="submit" data-bind="click: locationInputHandler">change location</button>
-</form>
+
+    <input id="location-box" class="controls" type="text" placeholder="Find markets in a new location"/>
+
 
 <div id="menu-container">
 <ul class="place-list" data-bind="foreach: placesList">

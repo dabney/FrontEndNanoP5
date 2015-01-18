@@ -49,13 +49,13 @@ var ViewModel = function() {
 };
 
 
-    this.locationInput = ko.observable('San Francisco, CA');
+    //this.locationInput = ko.observable('San Francisco, CA');
 //    var searchBox = new google.maps.places.SearchBox($("#pac-input"));
 
     locationInputHandler = function() {
         var googlePlaces;
         var listLength;
-  console.log('locationInputHandler: ' + self.locationInput());
+ // console.log('locationInputHandler: ' + self.locationInput());
    //   googlePlace = self.googlePlacesSearch.getPlaces()[0];
 googlePlaces = self.googlePlacesSearch.getPlaces();
     if (googlePlaces.length > 0) {
@@ -78,7 +78,7 @@ listLength = self.placesList().length;
     console.log('changing location; refilled placesList:' + self.placesList());
 }
   else {
-    console.log('get places fail');
+    alert("No matching locations");
    }
 };
 
@@ -269,6 +269,8 @@ selectedMarker.setIcon('images/carrot_in_ground.png');
  // map.controls[google.maps.ControlPosition.TOP_LEFT].push(locationInputBox);
 
   self.googlePlacesSearch = new google.maps.places.SearchBox((locationInputBox));
+  google.maps.event.addListener(self.googlePlacesSearch, 'places_changed',   locationInputHandler);
+
 
 //getFarmersMarketsByZip(35223);
 getFarmersMarketsByLatLng(37.7833, -122.4167);
