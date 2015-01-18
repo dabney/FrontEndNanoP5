@@ -53,17 +53,19 @@ var ViewModel = function() {
 //    var searchBox = new google.maps.places.SearchBox($("#pac-input"));
 
     locationInputHandler = function() {
-        var googlePlace;
+        var googlePlaces;
         var listLength;
   console.log('locationInputHandler: ' + self.locationInput());
    //   googlePlace = self.googlePlacesSearch.getPlaces()[0];
+googlePlaces = self.googlePlacesSearch.getPlaces();
+    if (googlePlaces.length > 0) {
+   console.dir(googlePlaces);
 
-    googlePlace = self.googlePlacesSearch.getPlaces()[0];
-   console.dir(googlePlace);
-    console.dir(googlePlace.geometry.location);
-    map.setCenter(googlePlace.geometry.location);
-    currentMapLatLng = googlePlace.geometry.location;
-console.log('changing location; current placesList:' + self.placesList());
+    console.dir(googlePlaces[0].geometry.location);
+ //  self.locationInput(googlePlace.formatted_address); //no worky because google call asynchy
+    map.setCenter(googlePlaces[0].geometry.location);
+    currentMapLatLng = googlePlaces[0].geometry.location;
+//console.log('changing location; current placesList:' + self.placesList());
 listLength = self.placesList().length;
     for (var i=listLength-1; i>=0; i--) {
         currentPlace = self.placesList().pop();
@@ -72,9 +74,12 @@ listLength = self.placesList().length;
     console.log('changing location; empty placesList:' + self.placesList());
 
 //self.placesList().splice(0, self.placesList().length);
-    getFarmersMarketsByLatLng(googlePlace.geometry.location.lat(), googlePlace.geometry.location.lng());
+    getFarmersMarketsByLatLng(googlePlaces[0].geometry.location.lat(), googlePlaces[0].geometry.location.lng());
     console.log('changing location; refilled placesList:' + self.placesList());
-
+}
+  else {
+    console.log('get places fail');
+   }
 };
 
 self.setPlace = function(clickedPlace) {
