@@ -1,114 +1,102 @@
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-              font-size: 100%;
-    }
-    h4 {
-        display: inline;
-    }
-      li {
-        margin: 0;
-        padding: 0;
-        list-style-type: none;
-    }
-      img {}
-      #app-container {
-        height: 100%;
-        width: 100%}
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+}
+h4 {
+  display: inline;
+}
+li {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+#app-container {
+  height: 100%;
+  width: 100%}
+#map-canvas { 
+  width: 100%;
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  z-index: 1;
+}
+#photo-album { 
+  display: none;
+  position: absolute;
+  float: bottom;
+  width: 30%;
+  height: 30%;
+  margin: 0;
+  padding: 0;
+  z-index: 1000;
+  overflow-y: scroll;}
+#search-box {
+  position: absolute;
+  z-index: 300;
+  width: 200px;
+  top: 10px;
+  right: 100px;
+  border-radius: 3px;}
+#search-button {
+  position: absolute;
+  top: 10px;
+  right: 5px;
+  z-index: 300;
+  border-radius: 3px;}
+#location-box {
+  position: absolute;
+  z-index: 300;
+  width: 200px;
+  top: 10px;
+  left: 50px;
+  border-radius: 3px;}
+.place-list {
+  padding: 3px;
+  display: inline-block;
+  width: 20%;
+  max-height: 90%;
+  float: right;
+  position: absolute;
+  top: 50px;
+  right: 5px;
+  z-index: 200;
+  overflow-y: scroll;
+  border-radius: 3px;
+}
+.place-list-item {
+  padding: 3px 5px;
+  margin: 0px 0px 0px 0px;
+  border: 2px solid gray;
+  border-top: 1px solid gray;
+  border-bottom: 1px solid gray;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: .8em;
+  background-color: white;
+  border-radius: 3px;
+}
+#album-close-button {
+  position:absolute;
+  float: right;
+  top: 5px;
+}
 
-
-      #map-canvas { 
-                width: 100%;
-
-        height: 100%;
-        left: 0px;
-        top: 0px;
-        margin: 0;
-        padding: 0;
-        position: absolute;
-        z-index: 1;
-    }
-    #photo-album { 
-        display: none;
-        position: absolute;
-        float: bottom;
-        width: 30%;
-        height: 30%;
-        margin: 0;
-        padding: 0;
-        z-index: 1000;
-        overflow-y: scroll;}
-        #search-box {
-            position: absolute;
-            z-index: 300;
-            width: 200px;
-            top: 10px;
-            right: 100px;}
-    #search-button {
-        position: absolute;
-        top: 10px;
-        right: 5px;
-        z-index: 300;}
-        #location-box {
-            position: absolute;
-            z-index: 300;
-            top: 10px;
-            left: 50px;}
-    #location-button {
-        position: absolute;
-        top: 10px;
-        left: 200px;
-        z-index: 300;}
-
-      .place-list {
-        padding: 3px;
-        height: 70%;
-        width: 20%;
-        background-color: white;
-        float: right;
-        position: absolute;
-        top: 50px;
-        right: 5px;
-        z-index: 200;
-        overflow-y: scroll;}
-      .place-list-item {
-        padding: 3px 5px;
-        margin: 0px 0px 0px 0px;
-        border: 2px solid gray;
-        border-top: 1px solid gray;
-        border-bottom: 1px solid gray;
-
-        cursor: pointer;
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: .8em;
-        }
-        #album-close-button {
-            position:absolute;
-            float: right;
-            top: 5px;
-        }
-
-        .map-marker {
-            color: #F57D3C;
-        }
-
-    @media only screen and (max-width: 480px) {
-                #search-box {
-                                top: 50px;
-
-                }
-                #search-button {
-                                top: 50px;
-
-                }
-
-            .place-list {
-  
-        width: 50%;
-    };
+@media only screen and (max-width: 480px) {
+  #search-box {
+    top: 50px;
+  }
+  #search-button {
+    top: 50px;
+  }
+.place-list {
+  width: 50%;
+  }
 }
 
 @media only screen and (max-device-width: 480px) {
-
-        }
+ }

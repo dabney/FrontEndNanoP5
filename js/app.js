@@ -1,102 +1,85 @@
-
 var ViewModel = function() {
-    var self = this;
-    var map;
-    var selectedMarker;
-    var unmatchedPlaces = [];
-    var googlePlacesSearch;
-    var currentMapLatLng;
-    var infoWindowContentString;
-        var infoWindow;
+  var self = this;
+  var map;
+  var selectedMarker;
+  var filteredOutPlaces = [];
+  var googlePlacesSearch;
+  var currentMapLatLng;
+  var infoWindowContentString;
+  var infoWindow;
 
-    this.placesList = ko.observableArray([]);
-  //  this.currentPlace = ko.observable(this.placesList()[0]);
+ self.placesList = ko.observableArray([]);
+  self.searchInput = ko.observable();
 
-    this.searchInput = ko.observable('');
+searchInputHandler = function() { 
+  var inputString;
+  var listLength;
+  var currentPlace;
+  var currentPlaceStringMashup;
 
-    searchInputHandler = function() { 
-        var inputString;
-        var listLength;
-        var currentPlace;
-        var currentPlaceStringMashup;
- //   console.log('searchInputHandler: ' + self.searchInput());
-    listLength = unmatchedPlaces.length;
-    for (var i=listLength-1; i>=0; i--) {
-        currentPlace = unmatchedPlaces.pop();
-        currentPlace.mapMarker.setVisible(true);
-        self.placesList.push(currentPlace);
+// restore the placesList to prefiltered state
+  listLength = filteredOutPlaces.length;
+  for (var i=listLength-1; i>=0; i--) {
+    currentPlace = filteredOutPlaces.pop();
+    currentPlace.mapMarker.setVisible(true);
+    self.placesList.push(currentPlace);
+  }
+
+// get the string from the text box and make it lower case for matching
+  inputString = self.searchInput().toLowerCase();
+
+// go through the placesList looking for matches; remove non-matching places and push to filteredOutPlaces
+  listLength = self.placesList().length;
+  for (var i=listLength-1; i>=0; i--) {
+    currentPlace = self.placesList()[i];
+    currentPlaceStringMashup = currentPlace.marketName + ' ' + currentPlace.address + ' ' + currentPlace.products + ' ' + currentPlace.schedule;
+    currentPlaceStringMashup = currentPlaceStringMashup.toLowerCase();
+    if (currentPlaceStringMashup.indexOf(inputString) == -1) {
+      currentPlace.mapMarker.setVisible(false);
+      self.placesList.remove(currentPlace);
+      filteredOutPlaces.push(currentPlace);
     }
-    inputString = self.searchInput().toLowerCase();
-//console.log('searcing for: ' + inputString);
- //   console.dir(self.placesList());
-    listLength = self.placesList().length;
-    for (var i=listLength-1; i>=0; i--) {
-   //     console.log('checking place #' + i);
-    //    console.dir(self.placesList()[i]);
-        currentPlace = self.placesList()[i];
-     //   console.log('currentPlace products: ' + currentPlace.products);
-        currentPlaceStringMashup = currentPlace.marketName + ' ' + currentPlace.address + ' ' + currentPlace.products + ' ' + currentPlace.schedule;
-        currentPlaceStringMashup = currentPlaceStringMashup.toLowerCase();
-        if (currentPlaceStringMashup.indexOf(inputString) == -1) {
-        //    console.log(inputString + ' not found at ' + currentPlace.marketName);
-                    currentPlace.mapMarker.setVisible(false);
-
-            self.placesList.remove(currentPlace);
-            unmatchedPlaces.push(currentPlace);
-        }
-    }
-
+  }
 };
 
+// The callback when the user enters a new location in the Google Places SearchBox
+locationInputHandler = function() {
+  var googlePlaces;
 
-    //this.locationInput = ko.observable('San Francisco, CA');
-//    var searchBox = new google.maps.places.SearchBox($("#pac-input"));
-
-    locationInputHandler = function() {
-        var googlePlaces;
-        var listLength;
- // console.log('locationInputHandler: ' + self.locationInput());
-   //   googlePlace = self.googlePlacesSearch.getPlaces()[0];
-googlePlaces = self.googlePlacesSearch.getPlaces();
-    if (googlePlaces.length > 0) {
-   console.dir(googlePlaces);
-
-    console.dir(googlePlaces[0].geometry.location);
- //  self.locationInput(googlePlace.formatted_address); //no worky because google call asynchy
+  googlePlaces = self.googlePlacesSearch.getPlaces();
+  if (googlePlaces.length > 0) {
+    clearPlacesList();
     map.setCenter(googlePlaces[0].geometry.location);
     currentMapLatLng = googlePlaces[0].geometry.location;
-//console.log('changing location; current placesList:' + self.placesList());
-listLength = self.placesList().length;
-    for (var i=listLength-1; i>=0; i--) {
-        currentPlace = self.placesList().pop();
-        currentPlace.mapMarker.setMap(null);
-    }
-    console.log('changing location; empty placesList:' + self.placesList());
-
-//self.placesList().splice(0, self.placesList().length);
     getFarmersMarketsByLatLng(googlePlaces[0].geometry.location.lat(), googlePlaces[0].geometry.location.lng());
-    console.log('changing location; refilled placesList:' + self.placesList());
-}
+  }
   else {
     alert("No matching locations");
-   }
+  }
 };
 
-self.setPlace = function(clickedPlace) {
- //   console.dir(clickedPlace);
- //   console.log('in setPlace: ' + clickedPlace.marketName);
-    updateInfoWindow(clickedPlace);
-    infoWindow.open(map, clickedPlace.mapMarker);
-    if (selectedMarker) {
-        selectedMarker.setIcon('images/carrot_in_ground.png');
-    };
-    selectedMarker = clickedPlace.mapMarker;
-    selectedMarker.setIcon('images/carrot_picked.png');
-    map.setCenter(selectedMarker.getPosition());
-                map.panBy(0, -150);
+clearPlacesList = function() {
+  var listLength;
+  listLength = self.placesList().length;
 
-
+  for (var i=listLength-1; i>=0; i--) {
+    currentPlace = self.placesList.pop();
+    currentPlace.mapMarker.setMap(null);
+  }
+   
 }
+
+self.setPlace = function(clickedPlace) {
+  showInfoWindow(clickedPlace);
+  if (selectedMarker) {
+    selectedMarker.setIcon('images/carrot_in_ground.png');
+  };
+  selectedMarker = clickedPlace.mapMarker;
+  selectedMarker.setIcon('images/carrot_picked.png');
+  map.setCenter(selectedMarker.getPosition());
+  map.panBy(0, -150);
+}
+
 
  function getFarmersMarketsByZip(zip) {
     $.ajax({
@@ -111,13 +94,38 @@ self.setPlace = function(clickedPlace) {
                 marketID: searchResults.results[i].id
             };
             getFarmersMarketDetails(place);
+
             self.placesList.push(place);
             }
-          }
+          },
+        error: function() {alert("Error getting data");}
     });
 }
 
 function getFarmersMarketsByLatLng(lat, lng) {
+    var myRequest = $.ajax({
+        type: "GET",
+        contentType: "application/json; charset=utf-8",
+        url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat=" + lat + "&lng=" + lng,
+        dataType: 'jsonp'})
+        .done(function(searchResults) {
+                   for (var i = 0; i < searchResults.results.length; i++) {
+                     var place = {
+                       marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ')+1),
+                       marketID: searchResults.results[i].id
+                     };
+                     getFarmersMarketDetails(place);
+                     self.placesList.push(place);
+
+                   }
+                 })
+        .fail(function() {
+            alert("Error getting farmers markets from usda.gov");
+        });
+}
+
+
+function getFarmersMarketsByLatLng_OLD(lat, lng) {
     $.ajax({
         type: "GET",
         contentType: "application/json; charset=utf-8",
@@ -131,12 +139,12 @@ function getFarmersMarketsByLatLng(lat, lng) {
                      };
                      getFarmersMarketDetails(place);
                      self.placesList.push(place);
+
                    }
-                 }
+                 },
+        error: function() {alert("Error getting data");}
     });
 }
-
-
 function getFarmersMarketDetails(place) {
     $.ajax({
         type: "GET",
@@ -165,50 +173,34 @@ function getFarmersMarketDetails(place) {
 
   //      console.dir(this);
     }
-    }
+    },
+        error: function() {alert("Error getting data");}
     });
 }
 
 
 function createMapMarker (lat, lng, customData) {
-            var googleLatLng = new google.maps.LatLng(lat, lng);
-        var marker = new google.maps.Marker({
-            map: map,
-            draggable: false,
-        //    animation: google.maps.Animation.DROP,
-            position: googleLatLng,
-            icon: 'images/carrot_in_ground.png'
-        });
-        marker.customData = customData;
-        google.maps.event.addListener(marker, 'click', function() {
-    //map.setZoom(12);
-    //map.setCenter(marker.getPosition());
+  var googleLatLng = new google.maps.LatLng(lat, lng);
+  var marker = new google.maps.Marker({
+               map: map,
+               draggable: false,
+               position: googleLatLng,
+               icon: 'images/carrot_in_ground.png'
+                });
+  marker.customData = customData;
+  google.maps.event.addListener(marker, 'click', function() {
             if (selectedMarker) selectedMarker.setIcon('images/carrot_in_ground.png'); // reset previously selected marker's icon
-            updateInfoWindow(marker.customData);
-            infoWindow.open(map, marker);
+            showInfoWindow(marker.customData);
             marker.setIcon('images/carrot_picked.png');
             selectedMarker = marker;
-                map.setCenter(selectedMarker.getPosition());
-
+            map.setCenter(selectedMarker.getPosition());
             map.panBy(0, -150);
   });
         return(marker);
 }
 
-function createInfoWindow (place) {
- var currentInfoWindow = new google.maps.InfoWindow({
-      disableAutoPan: false,
-      maxWidth: 100,
-      content: '<h4>' + place.marketName + '</h4>' +
-                '<p>' + place.address + '</p>' +
-                '<p> Hours: ' + place.schedule + '</p>' +
-                '<p> Products: ' + place.products + '</p>'
 
-  });
- return(currentInfoWindow);
-}
-
-function updateInfoWindow (place) {
+function showInfoWindow (place) {
     // Remove apostrophes from the market name for the Flickr photo search
     var marketNameFixed = place.marketName.replace(/'/g, '');
     /*
@@ -234,6 +226,8 @@ function updateInfoWindow (place) {
            infoWindow.setContent(infoWindowContentString );
                     //  infoWindow.setContent(document.getElementById('photo-album'));
 showFlickrPhotos(marketNameFixed, place.lat, place.lng);
+  infoWindow.open(map, place.mapMarker);
+
 
 }
       function initialize() {
@@ -248,10 +242,11 @@ showFlickrPhotos(marketNameFixed, place.lat, place.lng);
             mapOptions);
         currentMapLatLng={ lat: 37.7833, lng: -122.4167};
 infoWindow = new google.maps.InfoWindow(
+    /*
     {
       disableAutoPan: false,
       maxWidth: 310
-  }
+  }*/
     );
 infoWindow.context = self;
 
@@ -267,8 +262,10 @@ selectedMarker.setIcon('images/carrot_in_ground.png');
 
           var locationInputBox = (document.getElementById('location-box'));
  // map.controls[google.maps.ControlPosition.TOP_LEFT].push(locationInputBox);
-
-  self.googlePlacesSearch = new google.maps.places.SearchBox((locationInputBox));
+var locationSearchOptions = {
+  componentRestrictions: {country: 'us'}
+};
+  self.googlePlacesSearch = new google.maps.places.SearchBox((locationInputBox), locationSearchOptions);
   google.maps.event.addListener(self.googlePlacesSearch, 'places_changed',   locationInputHandler);
 
 
@@ -312,9 +309,7 @@ function(data) {
          + "/" + currentPhoto.id + "_" + currentPhoto.secret + ".jpg";
   //  $( "<img class=\"photo\">" ).attr( "src", currentPhotoThumbnailURL ).appendTo( "#photo-album" );
     infoWindowContentString = infoWindowContentString +
-    "<a href=" + currentPhotoURL + " target=\"_blank\"" +
-    "><img class=\"photo\" src=" + 
-    currentPhotoThumbnailURL + ">";
+    "<a href=" + currentPhotoURL + " target=\"_blank\"" + "><img class=\"photo\" src=" + currentPhotoThumbnailURL + ">";
     infoWindow.setContent(infoWindowContentString);
     console.log(currentPhotoThumbnailURL);
 }
