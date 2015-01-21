@@ -10,6 +10,9 @@ var ViewModel = function() {
 
  self.placesList = ko.observableArray([]);
   self.searchInput = ko.observable();
+    self.searchInput = ko.observable();
+
+  self.toggleListValue = ko.observable(true);
 
 searchInputHandler = function() { 
   var inputString;
@@ -21,7 +24,7 @@ searchInputHandler = function() {
   listLength = filteredOutPlaces.length;
   for (var i=listLength-1; i>=0; i--) {
     currentPlace = filteredOutPlaces.pop();
-    currentPlace.mapMarker.setVisible(true);
+    currentPlace.mapMarker.setVisible(false);
     self.placesList.push(currentPlace);
   }
 
@@ -41,6 +44,11 @@ searchInputHandler = function() {
     }
   }
 };
+
+locationInputFormSubmitHandler = function() {
+    alert('locationInputForm submit');
+}
+
 
 // The callback when the user enters a new location in the Google Places SearchBox
 locationInputHandler = function() {
@@ -71,6 +79,7 @@ clearPlacesList = function() {
 
 self.setPlace = function(clickedPlace) {
   showInfoWindow(clickedPlace);
+  self.toggleListValue(false);
   if (selectedMarker) {
     selectedMarker.setIcon('images/carrot_in_ground.png');
   };
@@ -80,6 +89,16 @@ self.setPlace = function(clickedPlace) {
   map.panBy(0, -150);
 }
 
+placeListToggleHandler = function() {
+    console.log(self.toggleListValue());
+   // alert('togglePlaceListHandler');
+    if (self.toggleListValue()) {
+    self.toggleListValue(false);
+}
+  else {
+    self.toggleListValue(true);
+}
+}
 
  function getFarmersMarketsByZip(zip) {
     $.ajax({
@@ -190,8 +209,11 @@ function createMapMarker (lat, lng, customData) {
                 });
   marker.customData = customData;
   google.maps.event.addListener(marker, 'click', function() {
-            if (selectedMarker) selectedMarker.setIcon('images/carrot_in_ground.png'); // reset previously selected marker's icon
+            if (selectedMarker) {
+              selectedMarker.setIcon('images/carrot_in_ground.png'); // reset previously selected marker's icon
+          }
             showInfoWindow(marker.customData);
+            self.toggleListValue(false);
             marker.setIcon('images/carrot_picked.png');
             selectedMarker = marker;
             map.setCenter(selectedMarker.getPosition());
@@ -204,13 +226,21 @@ function createMapMarker (lat, lng, customData) {
 function showInfoWindow (place) {
   // Remove apostrophes from the market name for the Flickr photo search
   var marketNameFixed = place.marketName.replace(/'/g, '');
-
+    if (window.innerHeight > 480) {
   infoWindowContentString = 
-    '<h4>' + place.marketName + '</h4><br>' +
-    '<h4>' + place.address + '</h4><br>' +
+    '<h4>' + place.marketName + '</h4><br>' + 
+    '<h4>' +place.address + '</h4><br>' +
     'Schedule: ' + place.schedule.replace(/\<br\>/g, '') + '<br>' +
     'Products: ' + place.products + '<br><br>' +
     'Flickr Photos (click to open photo in new window):<br>';
+}
+else {
+  infoWindowContentString = 
+    '<h4>' + place.marketName + '</h4><br>' + 
+    '<h4>' +place.address + '</h4><br>' +
+    'Schedule: ' + place.schedule.replace(/\<br\>/g, '') + '<br><br>' +
+    'Flickr Photos (click to open photo in new window):<br>';
+}
 
   infoWindow.setContent(infoWindowContentString );
   addFlickrPhotos(marketNameFixed);
@@ -228,11 +258,12 @@ function initialize() {
         if (map) {
         currentMapLatLng={ lat: 37.7833, lng: -122.4167};
 infoWindow = new google.maps.InfoWindow(
-    /*
+
     {
-      disableAutoPan: false,
-      maxWidth: 310
-  }*/
+     // disableAutoPan: false,
+      maxWidth: 260,
+      zIndex: 500
+  }
     );
 infoWindow.context = self;
 
@@ -297,7 +328,7 @@ var showFlickrPhotosInInfoWindow = function(photoArray) {
     var currentPhotoURL;
 
 
-  for (var i=0; i<8; i++) {
+  for (var i=0; i<3; i++) {
     if (photoArray[i]){
       currentPhoto = photoArray[i];
       currentPhotoThumbnailURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server

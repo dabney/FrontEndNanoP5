@@ -13,9 +13,13 @@
       <input id="search-box" type="text" placeholder="Filter by name, location, or products" data-bind="textInput: searchInput, valueUpdate: 'input'"/>
       <button id="search-button" type="submit" data-bind="click: searchInputHandler">find matches</button>
     </form>
+    
     <input id="location-box" type="text" placeholder="Find markets in a new location"/>
-    <div id="menu-container">
-      <ul class="place-list" data-bind="foreach: placesList">
+
+          <button id="place-list-toggle" data-bind="click: placeListToggleHandler">toggle</button>
+
+    <div id="list-container">
+      <ul class="place-list" data-bind="foreach: placesList, visible:toggleListValue">
         <li class="place-list-item" data-bind="text: marketName, click: $parent.setPlace" ></li>
       </ul>
     </div>
