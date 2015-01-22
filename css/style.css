@@ -12,9 +12,6 @@ li {
   padding: 0;
   list-style-type: none;
 }
-#app-container {
-  height: 100%;
-  width: 100%}
 #map-canvas { 
   width: 100%;
   height: 100%;
@@ -58,7 +55,7 @@ li {
   padding: 3px;
   display: inline-block;
   width: 20%;
-  max-height: 90%;
+  max-height: 70%;
   float: right;
   position: absolute;
   top: 50px;

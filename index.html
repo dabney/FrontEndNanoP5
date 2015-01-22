@@ -11,12 +11,12 @@
     <div id="map-canvas"></div>
     <form data-bind="submit: searchInputHandler">
       <input id="search-box" type="text" placeholder="Filter by name, location, or products" data-bind="textInput: searchInput, valueUpdate: 'input'"/>
-      <button id="search-button" type="submit" data-bind="click: searchInputHandler">find matches</button>
+      <button id="search-button" type="submit" data-bind="click: searchInputHandler">filter</button>
     </form>
     
     <input id="location-box" type="text" placeholder="Find markets in a new location"/>
 
-          <button id="place-list-toggle" data-bind="click: placeListToggleHandler">toggle</button>
+          <button id="place-list-toggle" data-bind="click: placeListToggleHandler"><img src="images/arrows_horizontal.png"/></button>
 
     <div id="list-container">
       <ul class="place-list" data-bind="foreach: placesList, visible:toggleListValue">
