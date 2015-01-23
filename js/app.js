@@ -12,7 +12,7 @@ var ViewModel = function() {
   self.searchInput = ko.observable();
   self.searchInput = ko.observable();
 
-  self.toggleListValue = ko.observable(true);
+  self.toggleMenuValue = ko.observable(true);
 
   searchInputHandler = function() {
     var inputString;
@@ -85,7 +85,7 @@ var ViewModel = function() {
   self.setPlace = function(clickedPlace) {
     console.log('in setPlace');
     showInfoWindow(clickedPlace);
-    self.toggleListValue(false);
+    self.toggleMenuValue(false);
     if (selectedMarker) {
       selectedMarker.setIcon('images/carrot_in_ground.png');
     };
@@ -95,13 +95,12 @@ var ViewModel = function() {
     map.panBy(0, -150);
   }
 
-  placeListToggleHandler = function() {
-    console.log(self.toggleListValue());
-    // alert('togglePlaceListHandler');
-    if (self.toggleListValue()) {
-      self.toggleListValue(false);
+  menuToggleHandler = function() {
+    console.log(self.toggleMenuValue());
+    if (self.toggleMenuValue()) {
+      self.toggleMenuValue(false);
     } else {
-      self.toggleListValue(true);
+      self.toggleMenuValue(true);
     }
   }
 
@@ -231,7 +230,7 @@ var ViewModel = function() {
       map.setCenter(selectedMarker.getPosition());
       console.log('window.innerHeight: ' + window.innerHeight);
       if (window.innerHeight <= 640) {
-        self.toggleListValue(false);
+        self.toggleMenuValue(false);
         map.panBy(0, -150);
       }
     });
@@ -269,7 +268,7 @@ var ViewModel = function() {
         lng: -122.4167
       },
       zoom: 13,
-      disableDefaultUI: true
+      //disableDefaultUI: true
     };
     map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);

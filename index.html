@@ -9,20 +9,24 @@
   </head>
   <body>
     <div id="map-canvas"></div>
-    <form data-bind="submit: searchInputHandler">
+    <button id="menu-toggle" data-bind="click: menuToggleHandler"><img src="images/cog.png" width="16" height="16"></button>
+    <div id="menu-container" , data-bind="visible:toggleMenuValue">
+
+    <input id="location-box" type="text" placeholder="Enter a different city"/>
+    <form id="search-form" data-bind="submit: searchInputHandler">
       <input id="search-box" type="text" placeholder="Filter by name, location, products" data-bind="textInput: searchInput, valueUpdate: 'input'"/>
       <button id="search-button" type="submit" data-bind="click: searchInputHandler"><img src="images/magnifying_glass.png" width="16" height="16"></button>
     </form>
-    
-    <input id="location-box" type="text" placeholder="Enter a different city"/>
+     </div>
 
-          <button id="place-list-toggle" data-bind="click: placeListToggleHandler"><img src="images/arrows_horizontal.png"></button>
 
-    <div id="list-container">
-      <ul class="place-list" data-bind="foreach: placesList, visible:toggleListValue">
+
+    <div id="list-container" data-bind="visible:toggleMenuValue">
+      <ul class="place-list" data-bind="foreach: placesList">
         <li class="place-list-item" data-bind="text: marketName, click: $parent.setPlace" ></li>
       </ul>
     </div>
+
     <script src="js/libs/jquery.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGkNL1MyGq7mJzh6-szeGne2y7xfB2Szs&libraries=places"></script>
     <script src="js/libs/knockout-3.2.0.js"></script>
