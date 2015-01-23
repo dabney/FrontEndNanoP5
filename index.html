@@ -12,7 +12,7 @@
     <button id="menu-toggle" data-bind="click: menuToggleHandler"><img src="images/cog.png" width="16" height="16"></button>
     <div id="menu-container" , data-bind="visible:toggleMenuValue">
 
-    <input id="location-box" type="text" placeholder="Enter a different city"/>
+    <input id="location-box" type="search" placeholder="Enter a different city"/>
     <form id="search-form" data-bind="submit: searchInputHandler">
       <input id="search-box" type="text" placeholder="Filter by name, location, products" data-bind="textInput: searchInput, valueUpdate: 'input'"/>
       <button id="search-button" type="submit" data-bind="click: searchInputHandler"><img src="images/magnifying_glass.png" width="16" height="16"></button>

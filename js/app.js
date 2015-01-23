@@ -92,7 +92,7 @@ var ViewModel = function() {
     selectedMarker = clickedPlace.mapMarker;
     selectedMarker.setIcon('images/carrot_picked.png');
     map.setCenter(selectedMarker.getPosition());
-    map.panBy(0, -150);
+    map.panBy(-48, -150);
   }
 
   menuToggleHandler = function() {
@@ -216,6 +216,7 @@ var ViewModel = function() {
     var marker = new google.maps.Marker({
       map: map,
       draggable: false,
+          animation: google.maps.Animation.DROP,
       position: googleLatLng,
       icon: 'images/carrot_in_ground.png'
     });
@@ -229,9 +230,9 @@ var ViewModel = function() {
       selectedMarker = marker;
       map.setCenter(selectedMarker.getPosition());
       console.log('window.innerHeight: ' + window.innerHeight);
-      if (window.innerHeight <= 640) {
+      if (window.innerHeight <= 720) {
         self.toggleMenuValue(false);
-        map.panBy(0, -150);
+        map.panBy(-48, -150);
       }
     });
     return (marker);
