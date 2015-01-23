@@ -4,14 +4,17 @@ html, body {
   padding: 0;
   font-size: 100%;
 }
+
 h4 {
   display: inline;
 }
+
 li {
   margin: 0;
   padding: 0;
   list-style-type: none;
 }
+
 #map-canvas { 
   width: 100%;
   height: 100%;
@@ -22,35 +25,42 @@ li {
   position: absolute;
   z-index: 1;
 }
-#search-box {
-  position: absolute;
-  z-index: 10;
-  width: 200px;
-  top: 10px;
-  right: 100px;
+
+#location-box {
+  position: fixed;
+  z-index: 20;
+  width: 250px;
+  height:22px;
+  top: 3px;
+  right: 30px;
   font-size: 1.0em;
   border-radius: 3px;}
+
+#search-box {
+  position: fixed;
+  z-index: 10;
+  width: 250px;
+  height: 22px;
+  top: 30px;
+  right: 30px;
+  font-size: 1.0em;
+  border-radius: 3px;}
+
 #search-button {
-  position: absolute;
-  top: 10px;
-  right: 5px;
+  position: fixed;
+  top: 30px;
+  right: 3px;
   z-index: 10;
   border-radius: 3px;}
+
 #place-list-toggle {
   position: absolute;
-  top: 50%;
+  top: 60px;
   right: 1px;
   z-index: 30;
   border-radius: 3px;    
 }
-#location-box {
-  position: absolute;
-  z-index: 20;
-  width: 200px;
-  top: 10px;
-  left: 50px;
-  font-size: 1.0em;
-  border-radius: 3px;}
+
 .place-list {
   padding: 3px;
   display: inline-block;
@@ -58,12 +68,13 @@ li {
   max-height: 70%;
   float: right;
   position: absolute;
-  top: 50px;
+  top: 90px;
   right: 5px;
   z-index: 5;
   overflow-y: scroll;
   border-radius: 3px;
 }
+
 .place-list-item {
   padding: 3px 5px;
   margin: 0px 0px 0px 0px;

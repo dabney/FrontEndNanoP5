@@ -20,27 +20,33 @@ var ViewModel = function() {
     var currentPlace;
     var currentPlaceStringMashup;
 
+
+    // get the string from the text box and continue if value is returned
+    if (inputString = self.searchInput()) {
+    //then make it lower case for matching
+     inputString = inputString.toLowerCase();
     // restore the placesList to prefiltered state
-    listLength = filteredOutPlaces.length;
-    for (var i = listLength - 1; i >= 0; i--) {
-      currentPlace = filteredOutPlaces.pop();
-      currentPlace.mapMarker.setVisible(false);
-      self.placesList.push(currentPlace);
-    }
+      listLength = filteredOutPlaces.length;
+      for (var i = listLength - 1; i >= 0; i--) {
+        currentPlace = filteredOutPlaces.pop();
+        currentPlace.mapMarker.setVisible(false);
+        self.placesList.push(currentPlace);
+      }
 
     // get the string from the text box and make it lower case for matching
-    inputString = self.searchInput().toLowerCase();
+      inputString = self.searchInput().toLowerCase();
 
     // go through the placesList looking for matches; remove non-matching places and push to filteredOutPlaces
-    listLength = self.placesList().length;
-    for (var i = listLength - 1; i >= 0; i--) {
-      currentPlace = self.placesList()[i];
-      currentPlaceStringMashup = currentPlace.marketName + ' ' + currentPlace.address + ' ' + currentPlace.products + ' ' + currentPlace.schedule;
-      currentPlaceStringMashup = currentPlaceStringMashup.toLowerCase();
-      if (currentPlaceStringMashup.indexOf(inputString) == -1) {
-        currentPlace.mapMarker.setVisible(false);
-        self.placesList.remove(currentPlace);
-        filteredOutPlaces.push(currentPlace);
+      listLength = self.placesList().length;
+      for (var i = listLength - 1; i >= 0; i--) {
+        currentPlace = self.placesList()[i];
+        currentPlaceStringMashup = currentPlace.marketName + ' ' + currentPlace.address +   ' ' + currentPlace.products + ' ' + currentPlace.schedule;
+        currentPlaceStringMashup = currentPlaceStringMashup.toLowerCase();
+        if (currentPlaceStringMashup.indexOf(inputString) == -1) {
+          currentPlace.mapMarker.setVisible(false);
+          self.placesList.remove(currentPlace);
+          filteredOutPlaces.push(currentPlace);
+        }
       }
     }
   };

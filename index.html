@@ -10,13 +10,13 @@
   <body>
     <div id="map-canvas"></div>
     <form data-bind="submit: searchInputHandler">
-      <input id="search-box" type="text" placeholder="Filter by name, location, or products" data-bind="textInput: searchInput, valueUpdate: 'input'"/>
-      <button id="search-button" type="submit" data-bind="click: searchInputHandler">filter</button>
+      <input id="search-box" type="text" placeholder="Filter by name, location, products" data-bind="textInput: searchInput, valueUpdate: 'input'"/>
+      <button id="search-button" type="submit" data-bind="click: searchInputHandler"><img src="images/magnifying_glass.png" width="16" height="16"></button>
     </form>
     
-    <input id="location-box" type="text" placeholder="Find markets in a new location"/>
+    <input id="location-box" type="text" placeholder="Enter a different city"/>
 
-          <button id="place-list-toggle" data-bind="click: placeListToggleHandler"><img src="images/arrows_horizontal.png"/></button>
+          <button id="place-list-toggle" data-bind="click: placeListToggleHandler"><img src="images/arrows_horizontal.png"></button>
 
     <div id="list-container">
       <ul class="place-list" data-bind="foreach: placesList, visible:toggleListValue">
