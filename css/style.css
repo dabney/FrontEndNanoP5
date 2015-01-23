@@ -1,6 +1,7 @@
 html, body {
   height: 100%;
   font-size: 100%;
+    overflow: none;
 }
 
 h4 {
@@ -63,7 +64,7 @@ li {
 
 #search-button {
   position: absolute;
-  top: 0px;
+  top: 2px;
   right: 0px;
   border-radius: 3px;
 }
@@ -72,7 +73,7 @@ li {
 .place-list {
   padding: 3px;
   display: inline-block;
-  width: 20%;
+  width: 240px;
   max-height: 70%;
   float: right;
   position: absolute;
@@ -96,15 +97,6 @@ li {
 }
 
 @media only screen and (max-width: 480px) {
-  #search-box {
-    top: 50px;
-  }
-  #search-button {
-    top: 50px;
-  }
-.place-list {
-  width: 70%;
-  }
 }
 
 @media only screen and (max-device-width: 480px) {

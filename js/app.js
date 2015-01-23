@@ -268,7 +268,8 @@ var ViewModel = function() {
         lng: -122.4167
       },
       zoom: 13,
-      //disableDefaultUI: true
+        zoomControl: true,
+      disableDefaultUI: true
     };
     map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);
