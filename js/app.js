@@ -10,8 +10,6 @@ var ViewModel = function() {
 
   self.placesList = ko.observableArray([]);
   self.searchInput = ko.observable();
-  self.searchInput = ko.observable();
-
   self.toggleMenuValue = ko.observable(true);
 
   searchInputHandler = function() {
@@ -20,22 +18,12 @@ var ViewModel = function() {
     var currentPlace;
     var currentPlaceStringMashup;
 
-
     // get the string from the text box and continue if value is returned
     if (inputString = self.searchInput()) {
     //then make it lower case for matching
      inputString = inputString.toLowerCase();
-    // restore the placesList to prefiltered state
-      listLength = filteredOutPlaces.length;
-      for (var i = listLength - 1; i >= 0; i--) {
-        currentPlace = filteredOutPlaces.pop();
-        currentPlace.mapMarker.setVisible(false);
-        self.placesList.push(currentPlace);
-      }
-
-    // get the string from the text box and make it lower case for matching
-      inputString = self.searchInput().toLowerCase();
-
+     // restore places list to unfiltered state
+     resetPlacesList();
     // go through the placesList looking for matches; remove non-matching places and push to filteredOutPlaces
       listLength = self.placesList().length;
       for (var i = listLength - 1; i >= 0; i--) {
@@ -49,7 +37,24 @@ var ViewModel = function() {
         }
       }
     }
+    // if nothing was entered restore list to original
+    else {
+      resetPlacesList();
+    }
   };
+
+resetPlacesList = function() {
+        var listLength;
+    var currentPlace;
+        // restore the placesList to prefiltered state
+      listLength = filteredOutPlaces.length;
+      for (var i = listLength - 1; i >= 0; i--) {
+        currentPlace = filteredOutPlaces.pop();
+        currentPlace.mapMarker.setVisible(false);
+        self.placesList.push(currentPlace);
+      }
+}
+
 
   locationInputFormSubmitHandler = function() {
     alert('locationInputForm submit');
@@ -65,7 +70,7 @@ var ViewModel = function() {
       clearPlacesList();
       map.setCenter(googlePlaces[0].geometry.location);
       currentMapLatLng = googlePlaces[0].geometry.location;
-      getFarmersMarketsByLatLng(googlePlaces[0].geometry.location.lat(), googlePlaces[0].geometry.location.lng());
+      getFarmersMarketsByLatLng(currentMapLatLng.lat(), currentMapLatLng.lng());
     } else {
       alert("No matching locations");
     }
@@ -82,8 +87,7 @@ var ViewModel = function() {
 
   }
 
-  self.setPlace = function(clickedPlace) {
-    console.log('in setPlace');
+  self.listClickHandler = function(clickedPlace) {
     showInfoWindow(clickedPlace);
     self.toggleMenuValue(false);
     if (selectedMarker) {
@@ -216,7 +220,7 @@ var ViewModel = function() {
     var marker = new google.maps.Marker({
       map: map,
       draggable: false,
-          animation: google.maps.Animation.DROP,
+      animation: google.maps.Animation.DROP,
       position: googleLatLng,
       icon: 'images/carrot_in_ground.png'
     });
@@ -334,7 +338,7 @@ var ViewModel = function() {
             showFlickrPhotosInInfoWindow(data.photos.photo);
           } else {
             infoWindowContentString = infoWindowContentString.replace('Flickr Photos (click to open photo in new window):<br>', '');
-            infoWindowContentString = infoWindowContentString + "No Flickr Photos Found :(<br>";
+            infoWindowContentString = infoWindowContentString + "No Flickr Photos Found<br>";
             infoWindow.setContent(infoWindowContentString);
           }
         },
