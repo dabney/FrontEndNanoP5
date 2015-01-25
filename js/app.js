@@ -1,16 +1,34 @@
+var INITIAL_LATITUDE = 37.7833;
+var INITIAL_LONGITUDE = -122.4167;
+
+var BasicGoogleMap = function(callingViewModel) {
+    console.dir(callingViewModel);
+   this.mapOptions = {
+      center: {
+        lat: INITIAL_LATITUDE,
+        lng: INITIAL_LONGITUDE
+      },
+      zoom: 13,
+      zoomControl: true,
+      disableDefaultUI: true
+    };
+    this.map = new google.maps.Map(document.getElementById('map-canvas'), this.mapOptions);
+}
+
+
+
 var ViewModel = function() {
   var self = this;
   var map;
   var selectedMarker;
   var filteredOutPlaces = [];
   var googlePlacesSearch;
-  var currentMapLatLng;
   var infoWindowContentString;
   var infoWindow;
 
   self.placesList = ko.observableArray([]);
   self.searchInput = ko.observable();
-  self.toggleMenuValue = ko.observable(true);
+  self.toggleMenuBoolean = ko.observable(true);
 
   searchInputHandler = function() {
     var inputString;
@@ -64,6 +82,7 @@ resetPlacesList = function() {
   // The callback when the user enters a new location in the Google Places SearchBox
   locationInputHandler = function() {
     var googlePlaces;
+    var currentMapLatLng;
 
     googlePlaces = self.googlePlacesSearch.getPlaces();
     if (googlePlaces.length > 0) {
@@ -89,7 +108,7 @@ resetPlacesList = function() {
 
   self.listClickHandler = function(clickedPlace) {
     showInfoWindow(clickedPlace);
-    self.toggleMenuValue(false);
+    self.toggleMenuBoolean(false);
     if (selectedMarker) {
       selectedMarker.setIcon('images/carrot_in_ground.png');
     };
@@ -100,11 +119,11 @@ resetPlacesList = function() {
   }
 
   menuToggleHandler = function() {
-    console.log(self.toggleMenuValue());
-    if (self.toggleMenuValue()) {
-      self.toggleMenuValue(false);
+    console.log(self.toggleMenuBoolean());
+    if (self.toggleMenuBoolean()) {
+      self.toggleMenuBoolean(false);
     } else {
-      self.toggleMenuValue(true);
+      self.toggleMenuBoolean(true);
     }
   }
 
@@ -233,9 +252,8 @@ resetPlacesList = function() {
       marker.setIcon('images/carrot_picked.png');
       selectedMarker = marker;
       map.setCenter(selectedMarker.getPosition());
-      console.log('window.innerHeight: ' + window.innerHeight);
       if (window.innerHeight <= 720) {
-        self.toggleMenuValue(false);
+        self.toggleMenuBoolean(false);
         map.panBy(-48, -150);
       }
     });
@@ -267,52 +285,25 @@ resetPlacesList = function() {
   }
 
   function initialize() {
-    var mapOptions = {
-      center: {
-        lat: 37.7833,
-        lng: -122.4167
-      },
-      zoom: 13,
-        zoomControl: true,
-      disableDefaultUI: true
-    };
-    map = new google.maps.Map(document.getElementById('map-canvas'),
-      mapOptions);
+
+    myMapObject = new BasicGoogleMap(self);
+    map = myMapObject.map;
     if (map) {
-      currentMapLatLng = {
-        lat: 37.7833,
-        lng: -122.4167
-      };
-      infoWindow = new google.maps.InfoWindow(
 
-        {
-          // disableAutoPan: false,
-          maxWidth: 260,
-          zIndex: 500
-        }
-      );
+      infoWindow = new google.maps.InfoWindow({maxWidth: 260,});
       infoWindow.context = self;
-
-      google.maps.event.addListener(window, 'resize', function() {
-        map.setCenter(currentMapLatLng);
-      });
+ 
       google.maps.event.addListener(infoWindow, 'closeclick', function() {
         selectedMarker.setIcon('images/carrot_in_ground.png');
       });
 
-
       var locationInputBox = (document.getElementById('location-box'));
       self.googlePlacesSearch = new google.maps.places.SearchBox(locationInputBox);
-      // set bounds to prioritize conus - still messes up zip codes :(
-      var southWest = new google.maps.LatLng(18.00, -125.00);
-      var northEast = new google.maps.LatLng(49.00, -62.00);
-      var CONUSBounds = new google.maps.LatLngBounds(southWest, northEast);
-      self.googlePlacesSearch.setBounds(CONUSBounds);
       google.maps.event.addListener(self.googlePlacesSearch, 'places_changed', locationInputHandler);
 
 
       //getFarmersMarketsByZip(35223);
-      getFarmersMarketsByLatLng(37.7833, -122.4167);
+      getFarmersMarketsByLatLng(INITIAL_LATITUDE, INITIAL_LONGITUDE);
     } else {
       alert("failed to load Google map - check your internet connection or firewall settings")
     }

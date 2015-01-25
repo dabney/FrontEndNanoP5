@@ -10,7 +10,7 @@
   <body>
     <div id="map-canvas"></div>
     <button id="menu-toggle" data-bind="click: menuToggleHandler"><img src="images/cog.png" width="32" height="32"></button>
-    <div id="menu-container" , data-bind="visible:toggleMenuValue">
+    <div id="menu-container" , data-bind="visible:toggleMenuBoolean">
 
     <input id="location-box" type="search" placeholder="Enter a different city"/>
     <form id="search-form" data-bind="submit: searchInputHandler">
@@ -48,7 +48,7 @@
 
 
 
-    <div id="list-container" data-bind="visible:toggleMenuValue">
+    <div id="list-container" data-bind="visible:toggleMenuBoolean">
       <ul class="place-list" data-bind="foreach: placesList">
         <li class="place-list-item" data-bind="text: marketName, click: $parent.listClickHandler" ></li>
       </ul>
