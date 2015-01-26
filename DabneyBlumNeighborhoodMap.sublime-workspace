@@ -52,23 +52,10 @@
 			}
 		},
 		{
-			"contents": "Package Control Messages\n========================\n\nPackage Control:\n---------------\n\n  Version 3.0 Release Notes\n  \n  \n  **** Windows Sublime Text 3 Users ****\n  \n  Due to a bug in Package Control 2.0, Windows ST3 users will need to open the\n  Sublime Text console (ctrl+`) and execute the following Python to properly\n  upgrade. All other users may ignore this part of the message.\n  \n  Make sure NOT to copy the leading two spaces, or an \"unexpected indent\" error\n  will occur.\n  \n  import urllib.request,os; pr='Preferences.sublime-settings'; ip='ignored_packages'; n='Package Control'; s=sublime.load_settings(pr); ig=s.get(ip); ig.append(n); s.set(ip,ig); sublime.save_settings('Preferences.sublime-settings'); pf=n+'.sublime-package'; urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler())); by=urllib.request.urlopen('https://packagecontrol.io/'+pf.replace(' ','%20')).read(); open(os.path.join(sublime.installed_packages_path(),pf),'wb').write(by); ig.remove(n); s.set(ip,ig); sublime.save_settings(pr); print('Package Control: 3.0.0 upgrade successful!')\n  \n  ********\n  \n  \n  Package Control 3.0 adds a bunch of polish, improving the Sublime Text\n  experience for users and package developers:\n  \n   - improved upgrades of themes, color schemes and syntaxes\n   - dependency support\n   - SSL for Linux\n   - new secondary Windows HTTP backend\n   - patches for Python in Sublime Text 2 on Windows\n   - commands to easily remove channels and repositories\n   - an events API for packages\n   - improved documentation\n  \n  \n  As of July 2014, I now work for myself. This has allowed me to spend more time\n  working on open source software, including Package Control. If you appreciate\n  the work I've done, please consider a small donation. If even 5% of regular\n  users donated the price of a coffee or beer, that would cover quite a bit of\n  my development time! See https://packagecontrol.io/about for options.\n  \n  \n  Some recent Package Control stats:\n  \n   - every weekday over 1M JSON requests hit the channel server\n   - in December, the channel server will transmit 4TB+ of compressed JSON\n   - users have installed, upgraded or removed 85M+ packages since late 2011\n  \n  \n  Read more about the release at:\n  \n  https://packagecontrol.io/news#2014-12-23-Package_Control_30_Released\n  \n",
-			"settings":
-			{
-				"buffer_size": 2331,
-				"line_ending": "Windows",
-				"name": "Package Control Messages",
-				"scratch": true
-			}
-		},
-		{
-			"contents": "var INITIAL_LATITUDE = 37.7833;\nvar INITIAL_LONGITUDE = -122.4167;\nvar NUMBER_OF_PHOTOS_TO_SHOW = 3;\n\nvar BasicGoogleMap = function(theViewModel) {\n    this.currentInfoWindowContentString='';\n   this.mapOptions = {\n      center: {\n        lat: INITIAL_LATITUDE,\n        lng: INITIAL_LONGITUDE\n      },\n      zoom: 12,\n      zoomControl: true,\n      disableDefaultUI: true\n    };\n    this.map = new google.maps.Map(document.getElementById('map-canvas'), this.mapOptions);\n    this.infoWindow = new google.maps.InfoWindow({maxWidth: 260,});\n    this.infoWindow.context = theViewModel;\n}\n\nBasicGoogleMap.prototype.resetInfoWindowContent = function(contentString) {\n        this.currentInfoWindowContentString=contentString;\n        this.infoWindow.setContent(contentString);\n}\n\nBasicGoogleMap.prototype.appendInfoWindowContent = function(contentString) {\n        this.currentInfoWindowContentString=this.currentInfoWindowContentString + contentString;\n        this.infoWindow.setContent(this.currentInfoWindowContentString);\n}\n\nBasicGoogleMap.prototype.openInfoWindow = function(mapMarker) {\n    this.infoWindow.open(this.map, mapMarker);\n}\n\nBasicGoogleMap.prototype.createMarker = function(lat, lng, customData) {\n    console.log('in createMarker');\n    var googleLatLng = new google.maps.LatLng(lat, lng);\n    var marker = new google.maps.Marker({\n      map: this.map,\n      draggable: false,\n      position: googleLatLng,\n      optimized: false, //required to use gif when marker selected\n      icon: 'images/carrot_in_ground.png'\n    });\n    marker.customData = customData;\n \n    return (marker);\n  }\n\nvar ViewModel = function() {\n  var self = this;\n  var map;\n  var selectedMarker;\n  var filteredOutPlaces = [];\n  var googlePlacesSearch;\n  var infoWindowContentString;\n  var infoWindow;\n\n  self.placesList = ko.observableArray([]);\n  self.searchInput = ko.observable();\n  self.toggleMenuBoolean = ko.observable(true);\n\n  searchInputHandler = function() {\n    var inputString;\n    var listLength;\n    var currentPlace;\n    var currentPlaceStringMashup;\n\n    // get the string from the text box and continue if value is returned\n    if (inputString = self.searchInput()) {\n    //then make it lower case for matching\n     inputString = inputString.toLowerCase();\n     // restore places list to unfiltered state\n     resetPlacesList();\n    // go through the placesList looking for matches; remove non-matching places and push to filteredOutPlaces\n      listLength = self.placesList().length;\n      for (var i = listLength - 1; i >= 0; i--) {\n        currentPlace = self.placesList()[i];\n        currentPlaceStringMashup = currentPlace.marketName + ' ' + currentPlace.address +   ' ' + currentPlace.products + ' ' + currentPlace.schedule;\n        currentPlaceStringMashup = currentPlaceStringMashup.toLowerCase();\n        if (currentPlaceStringMashup.indexOf(inputString) == -1) {\n          currentPlace.mapMarker.setVisible(false);\n          self.placesList.remove(currentPlace);\n          filteredOutPlaces.push(currentPlace);\n        }\n      }\n    }\n    // if nothing was entered restore list to original\n    else {\n      resetPlacesList();\n    }\n  };\n\nresetPlacesList = function() {\n        var listLength;\n    var currentPlace;\n        // restore the placesList to prefiltered state\n      listLength = filteredOutPlaces.length;\n      for (var i = listLength - 1; i >= 0; i--) {\n        currentPlace = filteredOutPlaces.pop();\n        currentPlace.mapMarker.setVisible(false);\n        self.placesList.push(currentPlace);\n      }\n}\n\n\n  locationInputFormSubmitHandler = function() {\n    alert('locationInputForm submit');\n  }\n\n\n  // The callback when the user enters a new location in the Google Places SearchBox\n  locationInputHandler = function() {\n    var googlePlaces;\n    var currentMapLatLng;\n\n    googlePlaces = self.googlePlacesSearch.getPlaces();\n    if (googlePlaces.length > 0) {\n      clearPlacesList();\n      map.setCenter(googlePlaces[0].geometry.location);\n      currentMapLatLng = googlePlaces[0].geometry.location;\n      getFarmersMarketsByLatLng(currentMapLatLng.lat(), currentMapLatLng.lng());\n    } else {\n      alert(\"No matching locations\");\n    }\n  };\n\n  clearPlacesList = function() {\n    var listLength;\n    listLength = self.placesList().length;\n\n    for (var i = listLength - 1; i >= 0; i--) {\n      currentPlace = self.placesList.pop();\n      currentPlace.mapMarker.setMap(null);\n    }\n  }\n\n  self.listClickHandler = function(clickedPlace) {\n    showDetailedInfo(clickedPlace);\n    self.toggleMenuBoolean(false);\n    if (selectedMarker) {\n      selectedMarker.setIcon('images/carrot_in_ground.png');\n    };\n    selectedMarker = clickedPlace.mapMarker;\n    selectedMarker.setIcon('images/carrot_picked_with_face.gif');\n    map.setCenter(selectedMarker.getPosition());\n    map.panBy(-60, -150);\n  }\n\n  menuToggleHandler = function() {\n    if (self.toggleMenuBoolean()) {\n      self.toggleMenuBoolean(false);\n    } else {\n      self.toggleMenuBoolean(true);\n    }\n  }\n\n// Retrieve the farmers market data by zip code\n// Not used in current implementation; leaving in for future use...\n  function getFarmersMarketsByZip(zip) {\n    $.ajax({\n      type: \"GET\",\n      contentType: \"application/json; charset=utf-8\",\n      url: \"http://search.ams.usda.gov/farmersmarkets/v1/data.svc/zipSearch?zip=\" + zip,\n      dataType: 'jsonp',\n      success: function(searchResults) {\n        for (var i = 0; i < searchResults.results.length; i++) {\n          var place = {\n            marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ') + 1),\n            marketID: searchResults.results[i].id\n          };\n          getFarmersMarketDetails(place);\n\n          self.placesList.push(place);\n        }\n      },\n      error: function() {\n        alert(\"Error getting data\");\n      }\n    });\n  }\n\n  function getFarmersMarketsByLatLng(lat, lng) {\n    var myRequest = $.ajax({\n        type: \"GET\",\n        contentType: \"application/json; charset=utf-8\",\n        url: \"http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat=\" + lat + \"&lng=\" + lng,\n        dataType: 'jsonp'\n      })\n      .done(function(searchResults) {\n        for (var i = 0; i < searchResults.results.length; i++) {\n          var place = {\n            marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ') + 1),\n            marketID: searchResults.results[i].id\n          };\n          getFarmersMarketDetails(place);\n          self.placesList.push(place);\n\n        }\n      })\n      .fail(function() {\n        alert(\"Error getting farmers market data from usda.gov\");\n      });\n  }\n\n\n  function getFarmersMarketsByLatLng_OLD(lat, lng) {\n    $.ajax({\n      type: \"GET\",\n      contentType: \"application/json; charset=utf-8\",\n      url: \"http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat=\" + lat + \"&lng=\" + lng,\n      dataType: 'jsonp',\n      success: function(searchResults) {\n        for (var i = 0; i < searchResults.results.length; i++) {\n          var place = {\n            marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ') + 1),\n            marketID: searchResults.results[i].id\n          };\n          getFarmersMarketDetails(place);\n          self.placesList.push(place);\n\n        }\n      },\n      error: function() {\n        alert(\"Error getting farmers market data from usda.gov\");\n      }\n    });\n  }\n\n  function getFarmersMarketDetails(place) {\n    $.ajax({\n        type: \"GET\",\n        contentType: \"application/json; charset=utf-8\",\n        // submit a get request to the restful service mktDetail.\n        url: \"http://search.ams.usda.gov/farmersmarkets/v1/data.svc/mktDetail?id=\" + place.marketID,\n        context: place,\n        dataType: 'jsonp',\n        cache: false\n      })\n      // In the success function this will be the context which is set to 'place'\n      .done(function(detailResults) {\n        if (detailResults) {\n          var marketDetails = detailResults.marketdetails;\n          var googleLink = marketDetails.GoogleLink;\n          var latStringStart = googleLink.indexOf('?q=') + 3;\n          var latStringEnd = googleLink.indexOf('%2C%20')\n          var lngStringStart = latStringEnd + 6;\n          var lngStringEnd = googleLink.lastIndexOf('%20');\n          this.lat = googleLink.substring(latStringStart, latStringEnd);\n          this.lng = googleLink.substring(lngStringStart, lngStringEnd);\n          this.address = marketDetails.Address;\n          this.schedule = marketDetails.Schedule;\n          this.products = marketDetails.Products;\n          this.mapMarker = myMapObject.createMarker(this.lat, this.lng, this);\n          addMapMarkerEventListener(this.mapMarker);\n          //this.mapInfoWindow = createInfoWindow(this);\n\n          //      console.dir(this);\n        }\n      })\n      .fail(function() {\n        alert(\"Error getting farmers market detail data from usda.gov\");\n      });\n  }\n\nfunction addMapMarkerEventListener(marker) {\n       google.maps.event.addListener(marker, 'click', function() {\n      if (selectedMarker) {\n        selectedMarker.setIcon('images/carrot_in_ground.png'); // reset previously selected marker's icon\n      }\n      showDetailedInfo(marker.customData);\n      marker.setIcon('images/carrot_picked_with_face.gif');\n      selectedMarker = marker;\n      this.map.setCenter(selectedMarker.getPosition());\n      if (window.innerHeight <= 720) {\n        self.toggleMenuBoolean(false);\n        this.map.panBy(-60, -150);\n      }\n    });\n}\n\n  function showDetailedInfo(place) {\n\n    if (window.innerHeight > 480) {\n      infoWindowContentString =\n        '<h4>' + place.marketName + '</h4><br>' +\n        '<h4>' + place.address + '</h4><br>' +\n        'Schedule: ' + place.schedule.replace(/\\<br\\>/g, '') + '<br>' +\n        'Products: ' + place.products + '<br><br>';\n    } else {\n      infoWindowContentString =\n        '<h4>' + place.marketName + '</h4><br>' +\n        '<h4>' + place.address + '</h4><br>' +\n        'Schedule: ' + place.schedule.replace(/\\<br\\>/g, '') + '<br><br>';\n    }\nmyMapObject.resetInfoWindowContent(infoWindowContentString);\n    addFlickrPhotos(place.marketName);\n    myMapObject.openInfoWindow(place.mapMarker);\n  }\n\n  function initialize() {\n\n    myMapObject = new BasicGoogleMap(self);\n    map = myMapObject.map;\n    if (map) {\n\ninfoWindow = myMapObject.infoWindow;\n    //  infoWindow.context = self;\n \n      google.maps.event.addListener(infoWindow, 'closeclick', function() {\n        selectedMarker.setIcon('images/carrot_in_ground.png');\n      });\n\n      var locationInputBox = (document.getElementById('location-box'));\n      self.googlePlacesSearch = new google.maps.places.SearchBox(locationInputBox);\n      google.maps.event.addListener(self.googlePlacesSearch, 'places_changed', locationInputHandler);\n\n\n      //getFarmersMarketsByZip(35223);\n      getFarmersMarketsByLatLng(INITIAL_LATITUDE, INITIAL_LONGITUDE);\n    } else {\n      alert(\"failed to load Google map - check your internet connection or firewall settings\")\n    }\n  };\n\n  if (window.google) {\n    google.maps.event.addDomListener(window, 'load', initialize);\n  } else {\n    alert('Google maps unavailable - check your internet connection or firewall settings and reload');\n  }\n\n\n  var addFlickrPhotos = function(marketName) {\n    // Remove apostrophes from the market name for the Flickr photo search\n    var marketNameSimplified = marketName.replace(/'/g, '');\n    var apiURLPartOne = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=';\n    var apiURLPartTwo = '&tag_mode=all&sort=interestingness-desc&safe_search=1&extras=date_taken&format=json&nojsoncallback=1';\n    var apiURLCombined = apiURLPartOne + marketNameSimplified + apiURLPartTwo;\n\n    // Make the AJAX call\n      $.ajax({\n        type: \"GET\",\n        url: apiURLCombined,\n        dataType: 'json',\n        success: function(data) {\n            showFlickrPhotosInInfoWindow(data.photos.photo);\n          },\n        error: function() {\n            errorGettingFlickrPhotosHandler();\n        }\n      });\n\n    } //end addFlickrPhotos\n\n  var showFlickrPhotosInInfoWindow = function(photoArray) {\n    var currentPhoto;\n    var currentPhotoThumbnailURL;\n    var currentPhotoURL;\n\n    if (photoArray.length > 0) {\n      myMapObject.appendInfoWindowContent('Flickr Photos (click to open photo in new window)<br>');\n      for (var i = 0; i < NUMBER_OF_PHOTOS_TO_SHOW; i++) {\n        if (photoArray[i]) {\n          currentPhoto = photoArray[i];\n          currentPhotoThumbnailURL = \"https://farm\" + \n                currentPhoto.farm + \".staticflickr.com/\" + \n                currentPhoto.server + \"/\" + \n                currentPhoto.id + \"_\" + \n                currentPhoto.secret + \"_s.jpg\";\n          currentPhotoURL = \"https://farm\" + \n                currentPhoto.farm + \".staticflickr.com/\" + \n                currentPhoto.server + \"/\" + \n                currentPhoto.id + \"_\" + \n                currentPhoto.secret + \".jpg\";\n          myMapObject.appendInfoWindowContent(\"<a href=\" + currentPhotoURL + \n                \" target=\\\"_blank\\\"\" + \n                \"><img class=\\\"photo\\\" src=\" + \n                currentPhotoThumbnailURL + \">\");\n        }\n      }\n    } \n    else {\n      myMapObject.appendInfoWindowContent(\"No Flickr Photos Found<br>\");\n    }\n  }\n\n  var errorGettingFlickrPhotosHandler = function() {\n    myMapObject.appendInfoWindowContent(\"Error retrieving Flickr photos<br>\");\n  }\n\n}; //end ViewModel\n\nko.applyBindings(new ViewModel());",
 			"file": "js/app.js",
-			"file_size": 14048,
-			"file_write_time": 130667701006296566,
 			"settings":
 			{
-				"buffer_size": 13612,
+				"buffer_size": 12154,
 				"line_ending": "Windows"
 			}
 		},
@@ -157,6 +144,27 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"infoWindowContentString",
+			"filterInputHandler",
+			"showDetailedInfo",
+			"map.setCenter",
+			"center",
+			"resetPlacesList",
+			"filter",
+			"getFarmersMarketsByZip",
+			"getFarmersMarketsByLatLng_OLD",
+			"addMapMarkerEventListener",
+			"marker",
+			"markers",
+			"search",
+			"search-button",
+			"search-box",
+			"search-form",
+			"search-box",
+			"search-form",
+			"searchInput",
+			"searchInputHandler",
+			"locationInputFormSubmitHandler",
 			"selectedMarker",
 			"toggleMenuBoolean",
 			"font",
@@ -263,28 +271,7 @@
 			"searchInputHandler",
 			"unmatched",
 			"listener",
-			"searchInput",
-			"locationinputbox",
-			"location-box",
-			"locationbox",
-			"googlePlacesSearch",
-			"searchbox",
-			"knockout",
-			"knocout",
-			"searchbox",
-			"searchplace",
-			"places.searchbox",
-			"google",
-			"search",
-			"products",
-			"pan",
-			"picked",
-			"infowindow",
-			"closeflickr",
-			"infoWindow",
-			"placesList",
-			"zoom",
-			"lng"
+			"searchInput"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -302,7 +289,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -318,8 +305,8 @@
 						"selection":
 						[
 							[
-								1157,
-								1157
+								872,
+								890
 							]
 						],
 						"settings":
@@ -329,7 +316,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 24.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
@@ -348,8 +335,8 @@
 						"selection":
 						[
 							[
-								1274,
-								1274
+								1277,
+								1277
 							]
 						],
 						"settings":
@@ -362,52 +349,24 @@
 						"translation.y": 900.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2331,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2331,
-								2331
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"word_wrap": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
 					"file": "js/app.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 13612,
+						"buffer_size": 12154,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1391,
-								1391
+								8159,
+								8159
 							]
 						],
 						"settings":
@@ -421,11 +380,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 3,
 					"file": "ResourcesUsed",
 					"semi_transient": false,
 					"settings":
@@ -449,7 +408,7 @@
 						"translation.y": 630.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]

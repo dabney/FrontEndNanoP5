@@ -15,9 +15,9 @@
     <div id="menu-container" , data-bind="visible:toggleMenuBoolean">
 
     <input id="location-box" type="search" placeholder="Enter a different city"/>
-    <form id="search-form" data-bind="submit: searchInputHandler">
-      <input id="search-box" type="text" placeholder="Enter a name, street, zip..." list="searchOptions" data-bind="textInput: searchInput, valueUpdate: 'input'"/>
-      <datalist id="searchOptions">
+    <form id="filter-form" data-bind="submit: filterInputHandler">
+      <input id="filter-box" type="text" placeholder="Enter a name, street, zip..." list="filterOptions" data-bind="textInput: filterInput, valueUpdate: 'input'"/>
+      <datalist id="filterOptions">
         <option value="...or choose a day/product to filter list">
         <option value="Sun">
         <option value="Mon">
@@ -44,7 +44,7 @@
         <option value="prepared foods (for immediate consumption)">
     </datalist>
 
-      <button id="search-button" type="submit" data-bind="click: searchInputHandler"><img src="images/magnifying_glass.png" width="32" height="32"></button>
+      <button id="filter-button" type="submit" data-bind="click: filterInputHandler"><img src="images/magnifying_glass.png" width="32" height="32"></button>
     </form>
      </div>
 

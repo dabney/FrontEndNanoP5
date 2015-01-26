@@ -18,6 +18,10 @@ var BasicGoogleMap = function(theViewModel) {
     this.infoWindow.context = theViewModel;
 }
 
+BasicGoogleMap.prototype.centerMap = function(googleLatLng) {
+      this.map.setCenter(googleLatLng);
+}
+
 BasicGoogleMap.prototype.resetInfoWindowContent = function(contentString) {
         this.currentInfoWindowContentString=contentString;
         this.infoWindow.setContent(contentString);
@@ -33,7 +37,6 @@ BasicGoogleMap.prototype.openInfoWindow = function(mapMarker) {
 }
 
 BasicGoogleMap.prototype.createMarker = function(lat, lng, customData) {
-    console.log('in createMarker');
     var googleLatLng = new google.maps.LatLng(lat, lng);
     var marker = new google.maps.Marker({
       map: this.map,
@@ -43,7 +46,6 @@ BasicGoogleMap.prototype.createMarker = function(lat, lng, customData) {
       icon: 'images/carrot_in_ground.png'
     });
     marker.customData = customData;
- 
     return (marker);
   }
 
@@ -53,21 +55,20 @@ var ViewModel = function() {
   var selectedMarker;
   var filteredOutPlaces = [];
   var googlePlacesSearch;
-  var infoWindowContentString;
   var infoWindow;
 
   self.placesList = ko.observableArray([]);
-  self.searchInput = ko.observable();
+  self.filterInput = ko.observable();
   self.toggleMenuBoolean = ko.observable(true);
 
-  searchInputHandler = function() {
+  filterInputHandler = function() {
     var inputString;
     var listLength;
     var currentPlace;
     var currentPlaceStringMashup;
 
     // get the string from the text box and continue if value is returned
-    if (inputString = self.searchInput()) {
+    if (inputString = self.filterInput()) {
     //then make it lower case for matching
      inputString = inputString.toLowerCase();
      // restore places list to unfiltered state
@@ -79,35 +80,35 @@ var ViewModel = function() {
         currentPlaceStringMashup = currentPlace.marketName + ' ' + currentPlace.address +   ' ' + currentPlace.products + ' ' + currentPlace.schedule;
         currentPlaceStringMashup = currentPlaceStringMashup.toLowerCase();
         if (currentPlaceStringMashup.indexOf(inputString) == -1) {
-          currentPlace.mapMarker.setVisible(false);
+          if (currentPlace.mapMarker) {
+            currentPlace.mapMarker.setVisible(false);
+          }
+          else {
+            alert('Map markers not ready, try again');
+            return;
+          }
           self.placesList.remove(currentPlace);
           filteredOutPlaces.push(currentPlace);
         }
       }
     }
-    // if nothing was entered restore list to original
+    // if nothing was entered, filter by nothing and restore list to original
     else {
       resetPlacesList();
     }
   };
 
 resetPlacesList = function() {
-        var listLength;
+    var listLength;
     var currentPlace;
         // restore the placesList to prefiltered state
       listLength = filteredOutPlaces.length;
       for (var i = listLength - 1; i >= 0; i--) {
         currentPlace = filteredOutPlaces.pop();
-        currentPlace.mapMarker.setVisible(false);
+        currentPlace.mapMarker.setVisible(true);
         self.placesList.push(currentPlace);
       }
 }
-
-
-  locationInputFormSubmitHandler = function() {
-    alert('locationInputForm submit');
-  }
-
 
   // The callback when the user enters a new location in the Google Places SearchBox
   locationInputHandler = function() {
@@ -117,7 +118,7 @@ resetPlacesList = function() {
     googlePlaces = self.googlePlacesSearch.getPlaces();
     if (googlePlaces.length > 0) {
       clearPlacesList();
-      map.setCenter(googlePlaces[0].geometry.location);
+      myMapObject.centerMap(googlePlaces[0].geometry.location);
       currentMapLatLng = googlePlaces[0].geometry.location;
       getFarmersMarketsByLatLng(currentMapLatLng.lat(), currentMapLatLng.lng());
     } else {
@@ -136,6 +137,7 @@ resetPlacesList = function() {
   }
 
   self.listClickHandler = function(clickedPlace) {
+        if (clickedPlace.mapMarker) {
     showDetailedInfo(clickedPlace);
     self.toggleMenuBoolean(false);
     if (selectedMarker) {
@@ -143,42 +145,20 @@ resetPlacesList = function() {
     };
     selectedMarker = clickedPlace.mapMarker;
     selectedMarker.setIcon('images/carrot_picked_with_face.gif');
-    map.setCenter(selectedMarker.getPosition());
+    myMapObject.centerMap(selectedMarker.getPosition());
     map.panBy(-60, -150);
+}
+    else {
+        alert('Map markers not ready yet, try again');
+    }
   }
 
   menuToggleHandler = function() {
-    console.log(self.toggleMenuBoolean());
     if (self.toggleMenuBoolean()) {
       self.toggleMenuBoolean(false);
     } else {
       self.toggleMenuBoolean(true);
     }
-  }
-
-// Retrieve the farmers market data by zip code
-// Not used in current implementation; leaving in for future use...
-  function getFarmersMarketsByZip(zip) {
-    $.ajax({
-      type: "GET",
-      contentType: "application/json; charset=utf-8",
-      url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/zipSearch?zip=" + zip,
-      dataType: 'jsonp',
-      success: function(searchResults) {
-        for (var i = 0; i < searchResults.results.length; i++) {
-          var place = {
-            marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ') + 1),
-            marketID: searchResults.results[i].id
-          };
-          getFarmersMarketDetails(place);
-
-          self.placesList.push(place);
-        }
-      },
-      error: function() {
-        alert("Error getting data");
-      }
-    });
   }
 
   function getFarmersMarketsByLatLng(lat, lng) {
@@ -204,29 +184,6 @@ resetPlacesList = function() {
       });
   }
 
-
-  function getFarmersMarketsByLatLng_OLD(lat, lng) {
-    $.ajax({
-      type: "GET",
-      contentType: "application/json; charset=utf-8",
-      url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat=" + lat + "&lng=" + lng,
-      dataType: 'jsonp',
-      success: function(searchResults) {
-        for (var i = 0; i < searchResults.results.length; i++) {
-          var place = {
-            marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ') + 1),
-            marketID: searchResults.results[i].id
-          };
-          getFarmersMarketDetails(place);
-          self.placesList.push(place);
-
-        }
-      },
-      error: function() {
-        alert("Error getting farmers market data from usda.gov");
-      }
-    });
-  }
 
   function getFarmersMarketDetails(place) {
     $.ajax({
@@ -272,7 +229,7 @@ function addMapMarkerEventListener(marker) {
       showDetailedInfo(marker.customData);
       marker.setIcon('images/carrot_picked_with_face.gif');
       selectedMarker = marker;
-      this.map.setCenter(selectedMarker.getPosition());
+      myMapObject.centerMap(selectedMarker.getPosition());
       if (window.innerHeight <= 720) {
         self.toggleMenuBoolean(false);
         this.map.panBy(-60, -150);
@@ -281,22 +238,23 @@ function addMapMarkerEventListener(marker) {
 }
 
   function showDetailedInfo(place) {
-
+    var contentString;
     if (window.innerHeight > 480) {
-      infoWindowContentString =
+      contentString =
         '<h4>' + place.marketName + '</h4><br>' +
         '<h4>' + place.address + '</h4><br>' +
         'Schedule: ' + place.schedule.replace(/\<br\>/g, '') + '<br>' +
         'Products: ' + place.products + '<br><br>';
     } else {
-      infoWindowContentString =
+      contentString =
         '<h4>' + place.marketName + '</h4><br>' +
         '<h4>' + place.address + '</h4><br>' +
         'Schedule: ' + place.schedule.replace(/\<br\>/g, '') + '<br><br>';
     }
-myMapObject.resetInfoWindowContent(infoWindowContentString);
+myMapObject.resetInfoWindowContent(contentString);
     addFlickrPhotos(place.marketName);
     myMapObject.openInfoWindow(place.mapMarker);
+
   }
 
   function initialize() {
@@ -317,7 +275,6 @@ infoWindow = myMapObject.infoWindow;
       google.maps.event.addListener(self.googlePlacesSearch, 'places_changed', locationInputHandler);
 
 
-      //getFarmersMarketsByZip(35223);
       getFarmersMarketsByLatLng(INITIAL_LATITUDE, INITIAL_LONGITUDE);
     } else {
       alert("failed to load Google map - check your internet connection or firewall settings")
