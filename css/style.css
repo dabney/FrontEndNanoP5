@@ -1,7 +1,7 @@
 html, body {
   height: 100%;
   font-size: 100%;
-    overflow: none;
+  overflow: none;
 }
 
 h4 {
@@ -22,6 +22,7 @@ li {
     position: absolute;
     right: 6px;
     top: 6px;
+    width: 292px;
   z-index: 30;
 }
 
@@ -36,10 +37,10 @@ li {
 
 #location-box {
   position: absolute;
-  width: 270px;
-  height:32px;
+  width: 292px;
+  height:36px;
   top: 0px;
-  right: 0px;
+  right: 6px;
   font-size: 1.1em;
   border-radius: 1px;
 }
@@ -57,15 +58,15 @@ li {
   width: 240px;
   height: 32px;
   top: 0px;
-  right: 42px;
+  right: 54px;
   font-size: 1.1em;
   border-radius: 1px;
 }
 
 #search-button {
   position: absolute;
-  top: 2px;
-  right: 0px;
+  top: 0px;
+  right: 6px;
   border-radius: 3px;
 }
 
@@ -73,12 +74,12 @@ li {
 .place-list {
   padding: 3px;
   display: inline-block;
-  width: 240px;
+  width: 290px;
   max-height: 70%;
   float: right;
   position: absolute;
-  top: 100px;
-  right: 5px;
+  top: 120px;
+  right: 6px;
   z-index: 5;
   overflow-y: auto;
 }
@@ -97,6 +98,9 @@ li {
 }
 
 @media only screen and (max-width: 480px) {
+    #menu-toggle {
+        width: 48px;
+    }
 }
 
 @media only screen and (max-device-width: 480px) {

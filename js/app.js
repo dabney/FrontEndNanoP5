@@ -9,7 +9,7 @@ var BasicGoogleMap = function(theViewModel) {
         lat: INITIAL_LATITUDE,
         lng: INITIAL_LONGITUDE
       },
-      zoom: 13,
+      zoom: 12,
       zoomControl: true,
       disableDefaultUI: true
     };
@@ -31,6 +31,21 @@ BasicGoogleMap.prototype.appendInfoWindowContent = function(contentString) {
 BasicGoogleMap.prototype.openInfoWindow = function(mapMarker) {
     this.infoWindow.open(this.map, mapMarker);
 }
+
+BasicGoogleMap.prototype.createMarker = function(lat, lng, customData) {
+    console.log('in createMarker');
+    var googleLatLng = new google.maps.LatLng(lat, lng);
+    var marker = new google.maps.Marker({
+      map: this.map,
+      draggable: false,
+      position: googleLatLng,
+      optimized: false, //required to use gif when marker selected
+      icon: 'images/carrot_in_ground.png'
+    });
+    marker.customData = customData;
+ 
+    return (marker);
+  }
 
 var ViewModel = function() {
   var self = this;
@@ -127,7 +142,7 @@ resetPlacesList = function() {
       selectedMarker.setIcon('images/carrot_in_ground.png');
     };
     selectedMarker = clickedPlace.mapMarker;
-    selectedMarker.setIcon('images/carrot_picked.png');
+    selectedMarker.setIcon('images/carrot_picked_with_face.gif');
     map.setCenter(selectedMarker.getPosition());
     map.panBy(-48, -150);
   }
@@ -141,6 +156,8 @@ resetPlacesList = function() {
     }
   }
 
+// Retrieve the farmers market data by zip code
+// Not used in current implementation; leaving in for future use...
   function getFarmersMarketsByZip(zip) {
     $.ajax({
       type: "GET",
@@ -183,7 +200,7 @@ resetPlacesList = function() {
         }
       })
       .fail(function() {
-        alert("Error getting farmers markets from usda.gov");
+        alert("Error getting farmers market data from usda.gov");
       });
   }
 
@@ -206,7 +223,7 @@ resetPlacesList = function() {
         }
       },
       error: function() {
-        alert("Error getting data");
+        alert("Error getting farmers market data from usda.gov");
       }
     });
   }
@@ -235,49 +252,36 @@ resetPlacesList = function() {
           this.address = marketDetails.Address;
           this.schedule = marketDetails.Schedule;
           this.products = marketDetails.Products;
-          this.mapMarker = createMapMarker(this.lat, this.lng, this);
+          this.mapMarker = myMapObject.createMarker(this.lat, this.lng, this);
+          addMapMarkerEventListener(this.mapMarker);
           //this.mapInfoWindow = createInfoWindow(this);
 
           //      console.dir(this);
         }
       })
       .fail(function() {
-        alert("Error getting market detail data from usda.gov");
+        alert("Error getting farmers market detail data from usda.gov");
       });
   }
 
-
-  function createMapMarker(lat, lng, customData) {
-    console.log('in createMapMarker');
-    var googleLatLng = new google.maps.LatLng(lat, lng);
-    var marker = new google.maps.Marker({
-      map: map,
-      draggable: false,
-      animation: google.maps.Animation.DROP,
-      position: googleLatLng,
-      icon: 'images/carrot_in_ground.png'
-    });
-    marker.customData = customData;
-    google.maps.event.addListener(marker, 'click', function() {
+function addMapMarkerEventListener(marker) {
+       google.maps.event.addListener(marker, 'click', function() {
       if (selectedMarker) {
         selectedMarker.setIcon('images/carrot_in_ground.png'); // reset previously selected marker's icon
       }
       showDetailedInfo(marker.customData);
-      marker.setIcon('images/carrot_picked.png');
+      marker.setIcon('images/carrot_picked_with_face.gif');
       selectedMarker = marker;
-      map.setCenter(selectedMarker.getPosition());
+      this.map.setCenter(selectedMarker.getPosition());
       if (window.innerHeight <= 720) {
         self.toggleMenuBoolean(false);
-        map.panBy(-48, -150);
+        this.map.panBy(-48, -150);
       }
     });
-    return (marker);
-  }
-
+}
 
   function showDetailedInfo(place) {
-    // Remove apostrophes from the market name for the Flickr photo search
-    var marketNameFixed = place.marketName.replace(/'/g, '');
+
     if (window.innerHeight > 480) {
       infoWindowContentString =
         '<h4>' + place.marketName + '</h4><br>' +
@@ -291,7 +295,7 @@ resetPlacesList = function() {
         'Schedule: ' + place.schedule.replace(/\<br\>/g, '') + '<br><br>';
     }
 myMapObject.resetInfoWindowContent(infoWindowContentString);
-    addFlickrPhotos(marketNameFixed);
+    addFlickrPhotos(place.marketName);
     myMapObject.openInfoWindow(place.mapMarker);
   }
 
@@ -328,9 +332,11 @@ infoWindow = myMapObject.infoWindow;
 
 
   var addFlickrPhotos = function(marketName) {
+        // Remove apostrophes from the market name for the Flickr photo search
+    var marketNameSimplified = marketName.replace(/'/g, '');
       var apiURLPartOne = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=';
       var apiURLPartTwo = '&tag_mode=all&sort=interestingness-desc&safe_search=1&extras=date_taken&format=json&nojsoncallback=1';
-      var apiURLCombined = apiURLPartOne + marketName + apiURLPartTwo;
+      var apiURLCombined = apiURLPartOne + marketNameSimplified + apiURLPartTwo;
       $.ajax({
         type: "GET",
         url: apiURLCombined,
@@ -351,14 +357,24 @@ infoWindow = myMapObject.infoWindow;
     var currentPhotoURL;
 
 if (photoArray.length > 0) {
-  myMapObject.appendInfoWindowContent('Flickr Photos (click to open photo in new window):<br>');
+  myMapObject.appendInfoWindowContent('Flickr Photos (click to open photo in new window)<br>');
     for (var i = 0; i < NUMBER_OF_PHOTOS_TO_SHOW; i++) {
       if (photoArray[i]) {
         currentPhoto = photoArray[i];
-        currentPhotoThumbnailURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server + "/" + currentPhoto.id + "_" + currentPhoto.secret + "_s.jpg";
-        currentPhotoURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server + "/" + currentPhoto.id + "_" + currentPhoto.secret + ".jpg";
-        myMapObject.appendInfoWindowContent(
-          "<a href=" + currentPhotoURL + " target=\"_blank\"" + "><img class=\"photo\" src=" + currentPhotoThumbnailURL + ">");
+        currentPhotoThumbnailURL = "https://farm" + 
+                currentPhoto.farm + ".staticflickr.com/" + 
+                currentPhoto.server + "/" + 
+                currentPhoto.id + "_" + 
+                currentPhoto.secret + "_s.jpg";
+        currentPhotoURL = "https://farm" + 
+                currentPhoto.farm + ".staticflickr.com/" + 
+                currentPhoto.server + "/" + 
+                currentPhoto.id + "_" + 
+                currentPhoto.secret + ".jpg";
+        myMapObject.appendInfoWindowContent("<a href=" + currentPhotoURL + 
+                " target=\"_blank\"" + 
+                "><img class=\"photo\" src=" + 
+                currentPhotoThumbnailURL + ">");
       }
     }
     } 
@@ -368,7 +384,7 @@ if (photoArray.length > 0) {
   }
 
   var errorGettingFlickrPhotosHandler = function() {
-                myMapObject.appendInfoWindowContent("Error retrieving Flickr photos<br>");
+    myMapObject.appendInfoWindowContent("Error retrieving Flickr photos<br>");
   }
 
 }; //end ViewModel
