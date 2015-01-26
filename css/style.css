@@ -41,6 +41,8 @@ li {
     top: 6px;
     width: 292px;
     z-index: 30;
+    -webkit-appearance: none;
+
 }
 
 #menu-container {
@@ -86,6 +88,8 @@ border-radius: 0;
   top: 0px;
   right: 6px;
   border-radius: 3px;
+  -webkit-appearance: none;
+
 }
 
 
@@ -116,7 +120,6 @@ border-radius: 0;
 
 @media only screen and (max-width: 680px) {
     #app-name {
-
     left: 22px;
     z-index: 10;
     font-size: 1.2em;
