@@ -1,8 +1,9 @@
 var INITIAL_LATITUDE = 37.7833;
 var INITIAL_LONGITUDE = -122.4167;
+var NUMBER_OF_PHOTOS_TO_SHOW = 3;
 
-var BasicGoogleMap = function(callingViewModel) {
-    console.dir(callingViewModel);
+var BasicGoogleMap = function(theViewModel) {
+    this.currentInfoWindowContentString='';
    this.mapOptions = {
       center: {
         lat: INITIAL_LATITUDE,
@@ -13,9 +14,23 @@ var BasicGoogleMap = function(callingViewModel) {
       disableDefaultUI: true
     };
     this.map = new google.maps.Map(document.getElementById('map-canvas'), this.mapOptions);
+    this.infoWindow = new google.maps.InfoWindow({maxWidth: 260,});
+    this.infoWindow.context = theViewModel;
 }
 
+BasicGoogleMap.prototype.resetInfoWindowContent = function(contentString) {
+        this.currentInfoWindowContentString=contentString;
+        this.infoWindow.setContent(contentString);
+}
 
+BasicGoogleMap.prototype.appendInfoWindowContent = function(contentString) {
+        this.currentInfoWindowContentString=this.currentInfoWindowContentString + contentString;
+        this.infoWindow.setContent(this.currentInfoWindowContentString);
+}
+
+BasicGoogleMap.prototype.openInfoWindow = function(mapMarker) {
+    this.infoWindow.open(this.map, mapMarker);
+}
 
 var ViewModel = function() {
   var self = this;
@@ -103,11 +118,10 @@ resetPlacesList = function() {
       currentPlace = self.placesList.pop();
       currentPlace.mapMarker.setMap(null);
     }
-
   }
 
   self.listClickHandler = function(clickedPlace) {
-    showInfoWindow(clickedPlace);
+    showDetailedInfo(clickedPlace);
     self.toggleMenuBoolean(false);
     if (selectedMarker) {
       selectedMarker.setIcon('images/carrot_in_ground.png');
@@ -248,7 +262,7 @@ resetPlacesList = function() {
       if (selectedMarker) {
         selectedMarker.setIcon('images/carrot_in_ground.png'); // reset previously selected marker's icon
       }
-      showInfoWindow(marker.customData);
+      showDetailedInfo(marker.customData);
       marker.setIcon('images/carrot_picked.png');
       selectedMarker = marker;
       map.setCenter(selectedMarker.getPosition());
@@ -261,7 +275,7 @@ resetPlacesList = function() {
   }
 
 
-  function showInfoWindow(place) {
+  function showDetailedInfo(place) {
     // Remove apostrophes from the market name for the Flickr photo search
     var marketNameFixed = place.marketName.replace(/'/g, '');
     if (window.innerHeight > 480) {
@@ -269,19 +283,16 @@ resetPlacesList = function() {
         '<h4>' + place.marketName + '</h4><br>' +
         '<h4>' + place.address + '</h4><br>' +
         'Schedule: ' + place.schedule.replace(/\<br\>/g, '') + '<br>' +
-        'Products: ' + place.products + '<br><br>' +
-        'Flickr Photos (click to open photo in new window):<br>';
+        'Products: ' + place.products + '<br><br>';
     } else {
       infoWindowContentString =
         '<h4>' + place.marketName + '</h4><br>' +
         '<h4>' + place.address + '</h4><br>' +
-        'Schedule: ' + place.schedule.replace(/\<br\>/g, '') + '<br><br>' +
-        'Flickr Photos (click to open photo in new window):<br>';
+        'Schedule: ' + place.schedule.replace(/\<br\>/g, '') + '<br><br>';
     }
-
-    infoWindow.setContent(infoWindowContentString);
+myMapObject.resetInfoWindowContent(infoWindowContentString);
     addFlickrPhotos(marketNameFixed);
-    infoWindow.open(map, place.mapMarker);
+    myMapObject.openInfoWindow(place.mapMarker);
   }
 
   function initialize() {
@@ -290,8 +301,8 @@ resetPlacesList = function() {
     map = myMapObject.map;
     if (map) {
 
-      infoWindow = new google.maps.InfoWindow({maxWidth: 260,});
-      infoWindow.context = self;
+infoWindow = myMapObject.infoWindow;
+    //  infoWindow.context = self;
  
       google.maps.event.addListener(infoWindow, 'closeclick', function() {
         selectedMarker.setIcon('images/carrot_in_ground.png');
@@ -325,16 +336,10 @@ resetPlacesList = function() {
         url: apiURLCombined,
         dataType: 'json',
         success: function(data) {
-          if (data.photos.photo.length > 0) {
-            showFlickrPhotosInInfoWindow(data.photos.photo);
-          } else {
-            infoWindowContentString = infoWindowContentString.replace('Flickr Photos (click to open photo in new window):<br>', '');
-            infoWindowContentString = infoWindowContentString + "No Flickr Photos Found<br>";
-            infoWindow.setContent(infoWindowContentString);
-          }
-        },
+               showFlickrPhotosInInfoWindow(data.photos.photo);
+          },
         error: function() {
-          alert("Error getting Flickr data");
+            errorGettingFlickrPhotosHandler();
         }
       });
 
@@ -345,17 +350,25 @@ resetPlacesList = function() {
     var currentPhotoThumbnailURL;
     var currentPhotoURL;
 
-
-    for (var i = 0; i < 3; i++) {
+if (photoArray.length > 0) {
+  myMapObject.appendInfoWindowContent('Flickr Photos (click to open photo in new window):<br>');
+    for (var i = 0; i < NUMBER_OF_PHOTOS_TO_SHOW; i++) {
       if (photoArray[i]) {
         currentPhoto = photoArray[i];
         currentPhotoThumbnailURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server + "/" + currentPhoto.id + "_" + currentPhoto.secret + "_s.jpg";
         currentPhotoURL = "https://farm" + currentPhoto.farm + ".staticflickr.com/" + currentPhoto.server + "/" + currentPhoto.id + "_" + currentPhoto.secret + ".jpg";
-        infoWindowContentString = infoWindowContentString +
-          "<a href=" + currentPhotoURL + " target=\"_blank\"" + "><img class=\"photo\" src=" + currentPhotoThumbnailURL + ">";
-        infoWindow.setContent(infoWindowContentString);
+        myMapObject.appendInfoWindowContent(
+          "<a href=" + currentPhotoURL + " target=\"_blank\"" + "><img class=\"photo\" src=" + currentPhotoThumbnailURL + ">");
       }
     }
+    } 
+    else {
+            myMapObject.appendInfoWindowContent("No Flickr Photos Found<br>");
+          }
+  }
+
+  var errorGettingFlickrPhotosHandler = function() {
+                myMapObject.appendInfoWindowContent("Error retrieving Flickr photos<br>");
   }
 
 }; //end ViewModel
