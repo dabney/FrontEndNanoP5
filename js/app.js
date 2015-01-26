@@ -144,7 +144,7 @@ resetPlacesList = function() {
     selectedMarker = clickedPlace.mapMarker;
     selectedMarker.setIcon('images/carrot_picked_with_face.gif');
     map.setCenter(selectedMarker.getPosition());
-    map.panBy(-48, -150);
+    map.panBy(-60, -150);
   }
 
   menuToggleHandler = function() {
@@ -275,7 +275,7 @@ function addMapMarkerEventListener(marker) {
       this.map.setCenter(selectedMarker.getPosition());
       if (window.innerHeight <= 720) {
         self.toggleMenuBoolean(false);
-        this.map.panBy(-48, -150);
+        this.map.panBy(-60, -150);
       }
     });
 }
@@ -332,17 +332,19 @@ infoWindow = myMapObject.infoWindow;
 
 
   var addFlickrPhotos = function(marketName) {
-        // Remove apostrophes from the market name for the Flickr photo search
+    // Remove apostrophes from the market name for the Flickr photo search
     var marketNameSimplified = marketName.replace(/'/g, '');
-      var apiURLPartOne = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=';
-      var apiURLPartTwo = '&tag_mode=all&sort=interestingness-desc&safe_search=1&extras=date_taken&format=json&nojsoncallback=1';
-      var apiURLCombined = apiURLPartOne + marketNameSimplified + apiURLPartTwo;
+    var apiURLPartOne = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=';
+    var apiURLPartTwo = '&tag_mode=all&sort=interestingness-desc&safe_search=1&extras=date_taken&format=json&nojsoncallback=1';
+    var apiURLCombined = apiURLPartOne + marketNameSimplified + apiURLPartTwo;
+
+    // Make the AJAX call
       $.ajax({
         type: "GET",
         url: apiURLCombined,
         dataType: 'json',
         success: function(data) {
-               showFlickrPhotosInInfoWindow(data.photos.photo);
+            showFlickrPhotosInInfoWindow(data.photos.photo);
           },
         error: function() {
             errorGettingFlickrPhotosHandler();
@@ -356,31 +358,31 @@ infoWindow = myMapObject.infoWindow;
     var currentPhotoThumbnailURL;
     var currentPhotoURL;
 
-if (photoArray.length > 0) {
-  myMapObject.appendInfoWindowContent('Flickr Photos (click to open photo in new window)<br>');
-    for (var i = 0; i < NUMBER_OF_PHOTOS_TO_SHOW; i++) {
-      if (photoArray[i]) {
-        currentPhoto = photoArray[i];
-        currentPhotoThumbnailURL = "https://farm" + 
+    if (photoArray.length > 0) {
+      myMapObject.appendInfoWindowContent('Flickr Photos (click to open photo in new window)<br>');
+      for (var i = 0; i < NUMBER_OF_PHOTOS_TO_SHOW; i++) {
+        if (photoArray[i]) {
+          currentPhoto = photoArray[i];
+          currentPhotoThumbnailURL = "https://farm" + 
                 currentPhoto.farm + ".staticflickr.com/" + 
                 currentPhoto.server + "/" + 
                 currentPhoto.id + "_" + 
                 currentPhoto.secret + "_s.jpg";
-        currentPhotoURL = "https://farm" + 
+          currentPhotoURL = "https://farm" + 
                 currentPhoto.farm + ".staticflickr.com/" + 
                 currentPhoto.server + "/" + 
                 currentPhoto.id + "_" + 
                 currentPhoto.secret + ".jpg";
-        myMapObject.appendInfoWindowContent("<a href=" + currentPhotoURL + 
+          myMapObject.appendInfoWindowContent("<a href=" + currentPhotoURL + 
                 " target=\"_blank\"" + 
                 "><img class=\"photo\" src=" + 
                 currentPhotoThumbnailURL + ">");
+        }
       }
-    }
     } 
     else {
-            myMapObject.appendInfoWindowContent("No Flickr Photos Found<br>");
-          }
+      myMapObject.appendInfoWindowContent("No Flickr Photos Found<br>");
+    }
   }
 
   var errorGettingFlickrPhotosHandler = function() {
