@@ -40,7 +40,7 @@ li {
     right: 6px;
     top: 6px;
     width: 292px;
-  z-index: 30;
+    z-index: 30;
 }
 
 #menu-container {
@@ -59,7 +59,8 @@ li {
   top: 0px;
   right: 6px;
   font-size: 1.1em;
-  border-radius: 1px;
+  -webkit-appearance: none;
+border-radius: 0;
 }
 
 #search-form {
@@ -127,6 +128,16 @@ li {
         width: 48px;
     }
 }
-
+@media only screen and (max-width: 480px) {
+    #app-name {
+    display: none;
+}
+    #USDA-disclaimer {
+      font-size: .4em;
+}
+    #menu-toggle {
+        width: 48px;
+    }
+}
 @media only screen and (max-device-width: 480px) {
  }
