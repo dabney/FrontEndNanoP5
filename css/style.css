@@ -41,6 +41,7 @@ li {
     top: 6px;
     width: 292px;
     z-index: 30;
+    opacity: 1.0;
     -webkit-appearance: none;
 
 }
@@ -60,7 +61,7 @@ li {
   height:36px;
   top: 0px;
   right: 6px;
-  font-size: 1.1em;
+  font-size: 1.0em;
   -webkit-appearance: none;
 border-radius: 0;
 }
@@ -79,7 +80,7 @@ border-radius: 0;
   height: 32px;
   top: 0px;
   right: 54px;
-  font-size: 1.1em;
+  font-size: 1.0em;
   border-radius: 1px;
 }
 
@@ -87,9 +88,9 @@ border-radius: 0;
   position: absolute;
   top: 0px;
   right: 6px;
-  border-radius: 3px;
+  border-radius: 1px;
+  opacity: 1.0;
   -webkit-appearance: none;
-
 }
 
 
