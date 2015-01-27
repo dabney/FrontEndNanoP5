@@ -11,51 +11,45 @@
     <div id="map-canvas"></div>
     <div id="USDA-disclaimer">This product uses USDA’s National Farmers Market API but is not endorsed or certified by USDA.</div>
     <div id="app-name">Farmers' Market Finder</div>
-    <button id="menu-toggle" data-bind="click: menuToggleHandler"><img src="images/list.png" width="32" height="32"></button>
+    <button id="menu-toggle" data-bind="click: menuToggleHandler"><img src="images/list.png"></button>
     <div id="menu-container" , data-bind="visible:toggleMenuBoolean">
-
-    <input id="location-box" type="search" placeholder="Enter a different city"/>
-    <form id="filter-form" data-bind="submit: filterInputHandler">
-      <input id="filter-box" type="text" placeholder="Enter a name, street, zip..." list="filterOptions" data-bind="textInput: filterInput, valueUpdate: 'input'"/>
-      <datalist id="filterOptions">
-        <option value="...or choose a day/product to filter list">
-        <option value="Sun">
-        <option value="Mon">
-        <option value="Tue">
-        <option value="Wed">
-        <option value="Thur">
-        <option value="Fri">
-        <option value="Sat">
-        <option value="fruit and vegetables">
-        <option value="baked goods">
-        <option value="cheese and/or dairy products">
-        <option value="crafts">
-        <option value="herbs">
-        <option value="meat">
-        <option value="fish">
-        <option value="poultry">
-        <option value="eggs">
-        <option value="honey">
-        <option value="cut flowers">
-        <option value="nuts">
-        <option value="jams, jellies, preserves, salsas, pickles">
-        <option value="plants">
-        <option value="soap and/or body care products">
-        <option value="prepared foods (for immediate consumption)">
-    </datalist>
-
-      <button id="filter-button" type="submit" data-bind="click: filterInputHandler"><img src="images/magnifying_glass.png" width="32" height="32"></button>
-    </form>
-     </div>
-
-
-
+      <input id="location-box" type="search" placeholder="Enter a different city"/>
+      <form id="filter-form" data-bind="submit: filterInputHandler">
+        <input id="filter-box" type="text" placeholder="Enter a name, street, zip..." list="filterOptions" data-bind="textInput: filterInput, valueUpdate: 'input'"/>
+          <datalist id="filterOptions">
+            <option value="...or choose a day/product to filter list">
+            <option value="Sun">
+            <option value="Mon">
+            <option value="Tue">
+            <option value="Wed">
+            <option value="Thur">
+            <option value="Fri">
+            <option value="Sat">
+            <option value="fruit and vegetables">
+            <option value="baked goods">
+            <option value="cheese and/or dairy products">
+            <option value="crafts">
+            <option value="herbs">
+            <option value="meat">
+            <option value="fish">
+            <option value="poultry">
+            <option value="eggs">
+            <option value="honey">
+            <option value="cut flowers">
+            <option value="nuts">
+            <option value="jams, jellies, preserves, salsas, pickles">
+            <option value="plants">
+            <option value="soap and/or body care products">
+            <option value="prepared foods (for immediate consumption)">
+          </datalist>
+        <button id="filter-button" type="submit" data-bind="click: filterInputHandler"><img src="images/magnifying_glass.png"></button>
+      </form>
+    </div>
     <div id="list-container" data-bind="visible:toggleMenuBoolean">
       <ul class="place-list" data-bind="foreach: placesList">
         <li class="place-list-item" data-bind="text: marketName, click: $parent.listClickHandler" ></li>
       </ul>
     </div>
-
     <script src="js/libs/jquery.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGkNL1MyGq7mJzh6-szeGne2y7xfB2Szs&libraries=places"></script>
     <script src="js/libs/knockout-3.2.0.js"></script>

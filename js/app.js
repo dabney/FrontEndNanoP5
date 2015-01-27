@@ -3,7 +3,7 @@ var INITIAL_LATITUDE = 37.7833; //initial position set to San Francisco
 var INITIAL_LONGITUDE = -122.4167;
 var NUMBER_OF_PHOTOS_TO_SHOW = 3; // number of Flickr thumbnails to show
 
-// A class to manage the map related functions including the infoWindow and markers
+// A class to manage the map related functions including the infoWindow and marker behavior
 var BasicGoogleMapManager = function(theViewModel) {
   this.currentlySelectedMarker=null;
   this.currentInfoWindowContentString='';
@@ -22,68 +22,69 @@ var BasicGoogleMapManager = function(theViewModel) {
 }
 
 BasicGoogleMapManager.prototype.centerMap = function(googleLatLng) {
-      this.map.setCenter(googleLatLng);
+  this.map.setCenter(googleLatLng);
 }
 
 BasicGoogleMapManager.prototype.panMap = function(xOffset, yOffset) {
-      this.map.panBy(xOffset, yOffset);
+  this.map.panBy(xOffset, yOffset);
 }
 
 BasicGoogleMapManager.prototype.resetInfoWindowContent = function(contentString) {
-        this.currentInfoWindowContentString=contentString;
-        this.infoWindow.setContent(contentString);
+  this.currentInfoWindowContentString=contentString;
+  this.infoWindow.setContent(contentString);
 }
 
 BasicGoogleMapManager.prototype.appendInfoWindowContent = function(contentString) {
-        this.currentInfoWindowContentString=this.currentInfoWindowContentString + contentString;
-        this.infoWindow.setContent(this.currentInfoWindowContentString);
+  this.currentInfoWindowContentString=this.currentInfoWindowContentString + contentString;
+  this.infoWindow.setContent(this.currentInfoWindowContentString);
 }
 
 BasicGoogleMapManager.prototype.openInfoWindow = function(mapMarker) {
-    this.infoWindow.open(this.map, mapMarker);
+  this.infoWindow.open(this.map, mapMarker);
 }
 
 BasicGoogleMapManager.prototype.closeInfoWindow = function(mapMarker) {
-    this.infoWindow.close();
+  this.infoWindow.close();
 }
 
 BasicGoogleMapManager.prototype.createMarker = function(lat, lng, customData) {
-    var googleLatLng = new google.maps.LatLng(lat, lng);
-    var marker = new google.maps.Marker({
-      map: this.map,
-      draggable: false,
-      position: googleLatLng,
-      optimized: false, //required to use gif when marker selected
-      icon: 'images/carrot_in_ground.png'
-    });
-    marker.customData = customData;
-    return (marker);
-  }
+  var googleLatLng = new google.maps.LatLng(lat, lng);
+  var marker = new google.maps.Marker({
+                                       map: this.map,
+                                       draggable: false,
+                                       position: googleLatLng,
+                                       optimized: false, //required to use gif
+                                       icon: 'images/carrot_in_ground.png'
+                                      });
+  marker.customData = customData;
+  return (marker);
+}
 
-  BasicGoogleMapManager.prototype.showMarker = function(marker) {
-    marker.setVisible(true);
-  }
+BasicGoogleMapManager.prototype.showMarker = function(marker) {
+  marker.setVisible(true);
+}
 
-  BasicGoogleMapManager.prototype.hideMarker = function(marker) {
-    marker.setVisible(false);
-  }
+BasicGoogleMapManager.prototype.hideMarker = function(marker) {
+  marker.setVisible(false);
+}
 
-  BasicGoogleMapManager.prototype.selectMarker = function(marker) {
-         // reset previously selected marker's icon
-    if (this.currentlySelectedMarker) {
-        this.currentlySelectedMarker.setIcon('images/carrot_in_ground.png');
-      }
-      this.currentlySelectedMarker = marker;
-      this.currentlySelectedMarker.setIcon('images/carrot_picked_with_face.gif');
+BasicGoogleMapManager.prototype.selectMarker = function(marker) {
+  // reset previously selected marker's icon
+  if (this.currentlySelectedMarker) {
+    this.currentlySelectedMarker.setIcon('images/carrot_in_ground.png');
   }
+  this.currentlySelectedMarker = marker;
+  this.currentlySelectedMarker.setIcon('images/carrot_picked_with_face.gif');
+}
 
-  BasicGoogleMapManager.prototype.deselectMarker = function() {
-    if (this.currentlySelectedMarker) {
-        this.currentlySelectedMarker.setIcon('images/carrot_in_ground.png');
-        this.currentlySelectedMarker = null;
-      }
+BasicGoogleMapManager.prototype.deselectMarker = function() {
+  if (this.currentlySelectedMarker) {
+    this.currentlySelectedMarker.setIcon('images/carrot_in_ground.png');
+    this.currentlySelectedMarker = null;
   }
+}
 
+// Our ViewModel with our Knockout observables and enclosing our other functions
 var ViewModel = function() {
   var self = this;
   var filteredOutPlaces = [];
@@ -102,26 +103,26 @@ var ViewModel = function() {
 // create a place object to store the ID and marketName and then must make a second
 // AJAX request for each market to get further details including its lat, lng
   function getFarmersMarketsByLatLng(lat, lng) {
-    var myRequest = $.ajax({
-        type: "GET",
-        contentType: "application/json; charset=utf-8",
-        url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat="
-                 + lat + "&lng=" + lng,
-        dataType: 'jsonp'
-      })
-      .done(function(searchResults) {
-        for (var i = 0; i < searchResults.results.length; i++) {
-          var place = {
-            // parse the market name from the market name string; do not need the distance
-            marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ') + 1),
-            marketID: searchResults.results[i].id
-          };
-          getFarmersMarketDetails(place);
-        }
-      })
+    $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat="
+                  + lat + "&lng=" + lng,
+            dataType: 'jsonp'
+            })
+     .done(function(searchResults) {
+            for (var i = 0; i < searchResults.results.length; i++) {
+              var place = {
+                // parse the market name from the market name string; do not need the distance
+                marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ') + 1),
+                marketID: searchResults.results[i].id
+              };
+              getFarmersMarketDetails(place);
+            }
+          })
       .fail(function() {
-        alert("Error getting farmers market data from usda.gov");
-      });
+              alert("Error getting farmers market data from usda.gov");
+            });
   }
 
 // This function sends an AJAX request to the USDA Farmers' Market API for the details of
@@ -135,19 +136,20 @@ var ViewModel = function() {
         type: "GET",
         contentType: "application/json; charset=utf-8",
         // submit a get request to the restful service mktDetail.
-        url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/mktDetail?id=" + place.marketID,
+        url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/mktDetail?id="
+               + place.marketID,
         context: place,
         dataType: 'jsonp',
         cache: false
-      })
-      // In the success function 'this' will be the context which is set to the 'place'
+          })
+      // In the done function 'this' will be the context which is set to the 'place'
       // that was created in getFarmersMarketsByLatLng
       .done(function(detailResults) {
         if (detailResults) {
           var marketDetails = detailResults.marketdetails;
           var googleLink = marketDetails.GoogleLink;
           var latStringStart = googleLink.indexOf('?q=') + 3;
-          var latStringEnd = googleLink.indexOf('%2C%20')
+          var latStringEnd = googleLink.indexOf('%2C%20');
           var lngStringStart = latStringEnd + 6;
           var lngStringEnd = googleLink.lastIndexOf('%20');
           this.lat = googleLink.substring(latStringStart, latStringEnd);
@@ -172,12 +174,13 @@ var ViewModel = function() {
   var addFlickrPhotos = function(marketName) {
     // Remove apostrophes from the market name for the Flickr photo search
     var marketNameSimplified = marketName.replace(/'/g, '');
+    // Construct the API URL to search for the simplified market name
     var apiURLPartOne = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=376b144109ffe90065a254606c9aae3d&&tags=';
     var apiURLPartTwo = '&tag_mode=all&sort=interestingness-desc&safe_search=1&extras=date_taken&format=json&nojsoncallback=1';
     var apiURLCombined = apiURLPartOne + marketNameSimplified + apiURLPartTwo;
 
     // Make the AJAX call
-      $.ajax({
+    $.ajax({
         type: "GET",
         url: apiURLCombined,
         dataType: 'json',
@@ -187,9 +190,8 @@ var ViewModel = function() {
         error: function() {
             errorGettingFlickrPhotosHandler();
         }
-      });
-
-    } //end addFlickrPhotos
+    });
+  } //end addFlickrPhotos
 
 // This function processes the data returned from the Flickr AJAX request and makes
 // a call to the mapManager to display them (or an appropriate message if no photos
@@ -240,21 +242,21 @@ var ViewModel = function() {
 
     // get the string from the text box and continue if value is returned
     if (inputString = self.filterInput()) {
-        // deselect currently selected map marker and close its infowindow
-        mapManager.deselectMarker();
-        mapManager.closeInfoWindow();
-    // restore places list to unfiltered state
-     restorePlacesList();
-    //make the input lower case for matching
-     inputString = inputString.toLowerCase();
-    // go through the placesList looking for matches; remove non-matching places and push to filteredOutPlaces
+      // deselect currently selected map marker and close its infowindow
+      mapManager.deselectMarker();
+      mapManager.closeInfoWindow();
+      // restore places list to unfiltered state
+      restorePlacesList();
+      //make the input lower case for matching
+      inputString = inputString.toLowerCase();
+      // go through the placesList looking for matches; remove non-matching places and push to filteredOutPlaces
       listLength = self.placesList().length;
       for (var i = listLength - 1; i >= 0; i--) {
         currentPlace = self.placesList()[i];
         currentPlaceStringMashup = currentPlace.marketName + ' ' + currentPlace.address +   ' ' + currentPlace.products + ' ' + currentPlace.schedule;
         currentPlaceStringMashup = currentPlaceStringMashup.toLowerCase();
         if (currentPlaceStringMashup.indexOf(inputString) == -1) {
-            mapManager.hideMarker(currentPlace.mapMarker);
+          mapManager.hideMarker(currentPlace.mapMarker);
           self.placesList.remove(currentPlace);
           filteredOutPlaces.push(currentPlace);
         }
@@ -264,19 +266,19 @@ var ViewModel = function() {
     else {
       restorePlacesList();
     }
-  };
+  }
 
-restorePlacesList = function() {
+  restorePlacesList = function() {
     var listLength;
     var currentPlace;
         // restore the placesList to prefiltered state
-      listLength = filteredOutPlaces.length;
-      for (var i = listLength - 1; i >= 0; i--) {
-        currentPlace = filteredOutPlaces.pop();
-            mapManager.showMarker(currentPlace.mapMarker);
-        self.placesList.push(currentPlace);
-      }
-}
+    listLength = filteredOutPlaces.length;
+    for (var i = listLength - 1; i >= 0; i--) {
+      currentPlace = filteredOutPlaces.pop();
+      mapManager.showMarker(currentPlace.mapMarker);
+      self.placesList.push(currentPlace);
+    }
+  }
 
   // The callback when the user enters a new location in the Google Places SearchBox
   // if a valid new location has been entered, the placesList is cleared, the map markers
@@ -294,15 +296,15 @@ restorePlacesList = function() {
       currentMapLatLng = googlePlaces[0].geometry.location;
       mapManager.centerMap(currentMapLatLng);
       getFarmersMarketsByLatLng(currentMapLatLng.lat(), currentMapLatLng.lng());
-    } else {
+    } 
+    else {
       alert("No matching locations");
     }
-  };
+  }
 
   clearPlacesList = function() {
     var listLength;
     listLength = self.placesList().length;
-
     for (var i = listLength - 1; i >= 0; i--) {
       currentPlace = self.placesList.pop();
       currentPlace.mapMarker.setMap(null);
@@ -312,7 +314,8 @@ restorePlacesList = function() {
   menuToggleHandler = function() {
     if (self.toggleMenuBoolean()) {
       self.toggleMenuBoolean(false);
-    } else {
+    } 
+    else {
       self.toggleMenuBoolean(true);
     }
   }
@@ -324,28 +327,27 @@ restorePlacesList = function() {
     mapManager.selectMarker(place.mapMarker);
     mapManager.centerMap(place.mapMarker.getPosition());
     // Pan the map for short windows
-      if (window.innerHeight <= 720) {
-        mapManager.panMap(-60, -150);
-      }
+    if (window.innerHeight <= 720) {
+      mapManager.panMap(-60, -150);
+    }
     // Hide the menu for narrow windows
-     if (window.innerWidth <= 1020) {
-        self.toggleMenuBoolean(false);
-      }
-}
+    if (window.innerWidth <= 1020) {
+      self.toggleMenuBoolean(false);
+    }
+  }
 
 // The handler for when the list is clicked
-self.listClickHandler = function(clickedPlace) {
+  self.listClickHandler = function(clickedPlace) {
     placePickedHandler(clickedPlace);
   }
 
 // Create an event listener for a map marker.  The customData for the marker
 // stores the place object associated with the marker
-function addMapMarkerEventListener(marker) {
-       google.maps.event.addListener(marker, 'click', function() {
-        placePickedHandler(marker.customData);
-  
+  function addMapMarkerEventListener(marker) {
+    google.maps.event.addListener(marker, 'click', function() {
+                                         placePickedHandler(marker.customData);
     });
-}
+  }
 
 // A function to show the market details and Flickr photo thumbnails in the
 // map infoWindow
@@ -360,7 +362,8 @@ function addMapMarkerEventListener(marker) {
         '<h4>' + place.address + '</h4><br>' +
         'Schedule: ' + place.schedule.replace(/\<br\>/g, '') + '<br>' +
         'Products: ' + place.products + '<br><br>';
-    } else {
+    } 
+    else {
       contentString =
         '<h4>' + place.marketName + '</h4><br>' +
         '<h4>' + place.address + '</h4><br>' +
@@ -369,7 +372,6 @@ function addMapMarkerEventListener(marker) {
     mapManager.resetInfoWindowContent(contentString);
     addFlickrPhotos(place.marketName);
     mapManager.openInfoWindow(place.mapMarker);
-
   }
 
 // A function to initialize the map and markets for the lat, lng specified in
@@ -386,17 +388,21 @@ function addMapMarkerEventListener(marker) {
                                         locationInputHandler);
 
       getFarmersMarketsByLatLng(INITIAL_LATITUDE, INITIAL_LONGITUDE);
-    } else {
+    }
+    else {
       alert("failed to load Google map - check your internet connection or firewall settings")
     }
-  };
+  }
 
 // Call to initialize
   if (window.google) {
     google.maps.event.addDomListener(window, 'load', initialize);
-  } else {
+  } 
+  else {
     alert('Google maps unavailable - check your internet connection or firewall settings and reload');
   }
 
 }; //end ViewModel
+
+// Apply the Knockout Bindings
 ko.applyBindings(new ViewModel());

@@ -13,46 +13,45 @@ li {
   list-style-type: none;
 }
 
-#map-canvas { 
+#map-canvas {
   width: 100%;
   height: 100%;
   z-index: 1;
 }
 
 #app-name {
-    position: absolute;
-    top: 12px;
-    left: 44px;
-    z-index: 10;
-    font-size: 2.0em;
+  position: absolute;
+  top: 12px;
+  left: 44px;
+  z-index: 10;
+  font-size: 2.0em;
 }
 
 #USDA-disclaimer {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    z-index: 10;
-      font-size: .6em;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
+  font-size: .6em;
 }
 
 #menu-toggle {
-    position: absolute;
-    right: 6px;
-    top: 6px;
-    width: 292px;
-    z-index: 30;
-    opacity: 1.0;
-    -webkit-appearance: none;
-
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  width: 292px;
+  z-index: 30;
+  opacity: 1.0;
+  -webkit-appearance: none;
 }
 
 #menu-container {
- position: absolute;
- right: 0px;
- top: 48px;
-    z-index: 20;
-    width: 280px;
-    height: 67px;
+  position: absolute;
+  right: 0px;
+  top: 48px;
+  z-index: 20;
+  width: 280px;
+  height: 67px;
 }
 
 #location-box {
@@ -63,12 +62,12 @@ li {
   right: 6px;
   font-size: 1.0em;
   -webkit-appearance: none;
-border-radius: 0;
+  border-radius: 0;
 }
 
 #filter-form {
-    position: absolute;
-    top: 42px;
+  position: absolute;
+  top: 42px;
   right: 0px;
   width: 280px;
   height: 32px;
@@ -92,7 +91,6 @@ border-radius: 0;
   opacity: 1.0;
   -webkit-appearance: none;
 }
-
 
 .place-list {
   padding: 3px;
@@ -120,28 +118,26 @@ border-radius: 0;
 }
 
 @media only screen and (max-width: 680px) {
-    #app-name {
+  #app-name {
     left: 22px;
     z-index: 10;
     font-size: 1.2em;
-}
-    #USDA-disclaimer {
-      font-size: .4em;
-}
-    #menu-toggle {
-        width: 48px;
-    }
+  }
+  #USDA-disclaimer {
+    font-size: .4em;
+  }
+  #menu-toggle {
+    width: 48px;
+  }
 }
 @media only screen and (max-width: 480px) {
-    #app-name {
+  #app-name {
     display: none;
+  }
+  #USDA-disclaimer {
+    font-size: .4em;
+  }
+  #menu-toggle {
+    width: 48px;
+  }
 }
-    #USDA-disclaimer {
-      font-size: .4em;
-}
-    #menu-toggle {
-        width: 48px;
-    }
-}
-@media only screen and (max-device-width: 480px) {
- }
