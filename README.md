@@ -15,3 +15,5 @@ To filter the markets, enter the market name or partial name, street, zip, produ
 says, "Enter a name, street, zip, ..." and click the magnifying glass button.
 
 To toggle the menu & list click on the menu bar at the top (or menu button at the top right on mobile devices).
+
+Details on the resources used to create this app are available in the ResourcesUsed file in this repository.
