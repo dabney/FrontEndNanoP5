@@ -1,8 +1,9 @@
+// constants
 var INITIAL_LATITUDE = 37.7833; //initial position set to San Francisco
 var INITIAL_LONGITUDE = -122.4167;
 var NUMBER_OF_PHOTOS_TO_SHOW = 3; // number of Flickr thumbnails to show
 
-
+// A class to manage the map related functions including the infoWindow and markers
 var BasicGoogleMapManager = function(theViewModel) {
   this.currentlySelectedMarker=null;
   this.currentInfoWindowContentString='';
@@ -93,7 +94,13 @@ var ViewModel = function() {
   self.filterInput = ko.observable();
   self.toggleMenuBoolean = ko.observable(true);
 
-
+// This function sends an AJAX request for the farmers' markets closest to the lat, lng
+// from the USDA Farmers' Market API.  More details about the API can be found at 
+// (http://search.ams.usda.gov/farmersmarkets/v1/svcdesc.html).  The API seems to 
+// always return exactly 19 markets.  The data returned is an integer ID and a marketname
+// string that contains the distance from the lat lng and the name of the market.  We will
+// create a place object to store the ID and marketName and then must make a second
+// AJAX request for each market to get further details including its lat, lng
   function getFarmersMarketsByLatLng(lat, lng) {
     var myRequest = $.ajax({
         type: "GET",
@@ -105,6 +112,7 @@ var ViewModel = function() {
       .done(function(searchResults) {
         for (var i = 0; i < searchResults.results.length; i++) {
           var place = {
+            // parse the market name from the market name string; do not need the distance
             marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ') + 1),
             marketID: searchResults.results[i].id
           };
@@ -116,7 +124,12 @@ var ViewModel = function() {
       });
   }
 
-
+// This function sends an AJAX request to the USDA Farmers' Market API for the details of
+// a particular farmers' market.  The detailed info includes a Google link string from which
+// we parse the lat, lng, plus the schedule, the address, and the products available.  This 
+// additional info will be added to our place object which was passed as the context of the AJAX
+// request.  We create and add a map marker with event listener to each place object, then push
+// the place onto our placesList
   function getFarmersMarketDetails(place) {
     $.ajax({
         type: "GET",
@@ -127,7 +140,8 @@ var ViewModel = function() {
         dataType: 'jsonp',
         cache: false
       })
-      // In the success function this will be the context which is set to 'place'
+      // In the success function 'this' will be the context which is set to the 'place'
+      // that was created in getFarmersMarketsByLatLng
       .done(function(detailResults) {
         if (detailResults) {
           var marketDetails = detailResults.marketdetails;
@@ -151,7 +165,10 @@ var ViewModel = function() {
       });
   }
 
-
+// This functions makes an AJAX request to the Flickr Photos Search API 
+// (https://www.flickr.com/services/api/flickr.photos.search.html) for 
+// any photos matching the market name of a farmers' market.  If successful
+// it calls the function to add the photos to the infowindow on the map
   var addFlickrPhotos = function(marketName) {
     // Remove apostrophes from the market name for the Flickr photo search
     var marketNameSimplified = marketName.replace(/'/g, '');
@@ -174,6 +191,9 @@ var ViewModel = function() {
 
     } //end addFlickrPhotos
 
+// This function processes the data returned from the Flickr AJAX request and makes
+// a call to the mapManager to display them (or an appropriate message if no photos
+// are available) in the map infoWindow
   var showFlickrPhotosInInfoWindow = function(photoArray) {
     var currentPhoto;
     var currentPhotoThumbnailURL;
@@ -210,7 +230,8 @@ var ViewModel = function() {
     mapManager.appendInfoWindowContent("Error retrieving Flickr photos<br>");
   }
 
-
+// This function handles a user input in a text box to filter/search the list of markets
+// for keywords such as market name, address, days open, and products sold
   filterInputHandler = function() {
     var inputString;
     var listLength;
@@ -258,6 +279,9 @@ restorePlacesList = function() {
 }
 
   // The callback when the user enters a new location in the Google Places SearchBox
+  // if a valid new location has been entered, the placesList is cleared, the map markers
+  // and infowindow are reset, the map is recentered on the new lat, lng and the farmers'
+  // market data is requested and processed
   locationInputHandler = function() {
     var googlePlaces;
     var currentMapLatLng;
@@ -265,8 +289,10 @@ restorePlacesList = function() {
     googlePlaces = self.googlePlacesSearch.getPlaces();
     if (googlePlaces.length > 0) {
       clearPlacesList();
-      mapManager.centerMap(googlePlaces[0].geometry.location);
+      mapManager.deselectMarker();
+      mapManager.closeInfoWindow();
       currentMapLatLng = googlePlaces[0].geometry.location;
+      mapManager.centerMap(currentMapLatLng);
       getFarmersMarketsByLatLng(currentMapLatLng.lat(), currentMapLatLng.lng());
     } else {
       alert("No matching locations");
@@ -291,6 +317,8 @@ restorePlacesList = function() {
     }
   }
 
+// A function to update the map items when the user selects a 
+// market by clicking the list or a map marker
   function placePickedHandler(place) {
     showDetailedInfo(place);
     mapManager.selectMarker(place.mapMarker);
@@ -305,11 +333,13 @@ restorePlacesList = function() {
       }
 }
 
-
+// The handler for when the list is clicked
 self.listClickHandler = function(clickedPlace) {
     placePickedHandler(clickedPlace);
   }
 
+// Create an event listener for a map marker.  The customData for the marker
+// stores the place object associated with the marker
 function addMapMarkerEventListener(marker) {
        google.maps.event.addListener(marker, 'click', function() {
         placePickedHandler(marker.customData);
@@ -317,6 +347,8 @@ function addMapMarkerEventListener(marker) {
     });
 }
 
+// A function to show the market details and Flickr photo thumbnails in the
+// map infoWindow
   function showDetailedInfo(place) {
     var contentString;
 
@@ -340,6 +372,8 @@ function addMapMarkerEventListener(marker) {
 
   }
 
+// A function to initialize the map and markets for the lat, lng specified in
+// the INITIAL_LATITUDE, INITIAL_LONGITUDE constants
   function initialize() {
     mapManager = new BasicGoogleMapManager(self);
     if (mapManager.map) { 
@@ -351,13 +385,13 @@ function addMapMarkerEventListener(marker) {
       google.maps.event.addListener(self.googlePlacesSearch, 'places_changed', 
                                         locationInputHandler);
 
-
       getFarmersMarketsByLatLng(INITIAL_LATITUDE, INITIAL_LONGITUDE);
     } else {
       alert("failed to load Google map - check your internet connection or firewall settings")
     }
   };
 
+// Call to initialize
   if (window.google) {
     google.maps.event.addDomListener(window, 'load', initialize);
   } else {
