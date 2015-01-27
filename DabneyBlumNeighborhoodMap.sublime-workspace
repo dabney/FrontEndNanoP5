@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"dese",
+				"deselectMarker"
+			],
+			[
 				"I",
 				"IMAGEHEIGHT"
 			],
@@ -55,7 +59,7 @@
 			"file": "js/app.js",
 			"settings":
 			{
-				"buffer_size": 12154,
+				"buffer_size": 12917,
 				"line_ending": "Windows"
 			}
 		},
@@ -144,6 +148,23 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"visible",
+			"mymapObject",
+			"BasicGoogleMap",
+			"openInfoWindow",
+			"placePickedHandler",
+			"theViewModel",
+			"context",
+			"locationInputBox",
+			"resetPlacesList",
+			"selectedmar",
+			"map.",
+			"selectedMarker",
+			"pan",
+			"panby",
+			"map",
+			"infowindow",
+			"push",
 			"infoWindowContentString",
 			"filterInputHandler",
 			"showDetailedInfo",
@@ -254,24 +275,7 @@
 			"flic",
 			"success",
 			"console.log",
-			"console.llog",
-			"placesList",
-			"searchInputHandler",
-			"placesList",
-			"searchbox",
-			"google.maps.searchbox",
-			"google.maps.InfoWindow",
-			"createinfowindow",
-			"createMapmarker",
-			"createMap",
-			"showinfowindow",
-			"updateinfowindow",
-			"setplace",
-			"locationInputHandler",
-			"searchInputHandler",
-			"unmatched",
-			"listener",
-			"searchInput"
+			"console.llog"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -358,15 +362,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 12154,
+						"buffer_size": 12917,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8159,
-								8159
+								8708,
+								8708
 							]
 						],
 						"settings":
@@ -377,7 +381,7 @@
 							"word_wrap": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1035.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
