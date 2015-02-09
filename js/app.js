@@ -90,6 +90,7 @@ var ViewModel = function() {
   var filteredOutPlaces = [];
   var googlePlacesSearch;
   var mapManager;
+  var FarmersMarketAJAXSuccess = false;
 
   self.placesList = ko.observableArray([]);
   self.filterInput = ko.observable();
@@ -103,6 +104,34 @@ var ViewModel = function() {
 // create a place object to store the ID and marketName and then must make a second
 // AJAX request for each market to get further details including its lat, lng
   function getFarmersMarketsByLatLng(lat, lng) {
+
+    $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat="
+                  + lat + "&lng=" + lng,
+            dataType: 'jsonp'
+            })
+     .done(function(searchResults) {
+            // the call to the USDA website worked, so set our success flag to true
+            // when our timeout completes no error message will be displayed
+            FarmersMarketAJAXSuccess = true;
+            for (var i = 0; i < searchResults.results.length; i++) {
+              var place = {
+                // parse the market name from the market name string; do not need the distance
+                marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ') + 1),
+                marketID: searchResults.results[i].id
+              };
+              getFarmersMarketDetails(place);
+            }
+          })
+      .fail(function() {
+        console.log('in fail');
+              alert("fail: Error getting farmers market data from usda.gov");
+            });
+  }
+
+ function OLDgetFarmersMarketsByLatLng(lat, lng) {
     $.ajax({
             type: "GET",
             contentType: "application/json; charset=utf-8",
@@ -121,7 +150,7 @@ var ViewModel = function() {
             }
           })
       .fail(function() {
-              alert("Error getting farmers market data from usda.gov");
+              alert("fail: Error getting farmers market data from usda.gov");
             });
   }
 
@@ -386,7 +415,13 @@ var ViewModel = function() {
       self.googlePlacesSearch = new google.maps.places.SearchBox(document.getElementById('location-box'));
       google.maps.event.addListener(self.googlePlacesSearch, 'places_changed', 
                                         locationInputHandler);
-
+      // set up a timeout that runs a function that will check whether or not
+      // our AJAX call to the Farmers' Market API was successful and will alert
+      // the user if it was not
+      setTimeout(function() {
+            if (!FarmersMarketAJAXSuccess) {
+              alert("Error getting farmers market data from usda.gov");}
+            }, 8000);
       getFarmersMarketsByLatLng(INITIAL_LATITUDE, INITIAL_LONGITUDE);
     }
     else {
