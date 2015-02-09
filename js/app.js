@@ -126,33 +126,10 @@ var ViewModel = function() {
             }
           })
       .fail(function() {
-        console.log('in fail');
               alert("fail: Error getting farmers market data from usda.gov");
             });
   }
 
- function OLDgetFarmersMarketsByLatLng(lat, lng) {
-    $.ajax({
-            type: "GET",
-            contentType: "application/json; charset=utf-8",
-            url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat="
-                  + lat + "&lng=" + lng,
-            dataType: 'jsonp'
-            })
-     .done(function(searchResults) {
-            for (var i = 0; i < searchResults.results.length; i++) {
-              var place = {
-                // parse the market name from the market name string; do not need the distance
-                marketName: searchResults.results[i].marketname.substring(searchResults.results[i].marketname.indexOf(' ') + 1),
-                marketID: searchResults.results[i].id
-              };
-              getFarmersMarketDetails(place);
-            }
-          })
-      .fail(function() {
-              alert("fail: Error getting farmers market data from usda.gov");
-            });
-  }
 
 // This function sends an AJAX request to the USDA Farmers' Market API for the details of
 // a particular farmers' market.  The detailed info includes a Google link string from which
